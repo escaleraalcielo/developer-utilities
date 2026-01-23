@@ -123,8 +123,71 @@ document.addEventListener('DOMContentLoaded', () => {
         outputEl.value = result;
         outputStatsEl.textContent = `${processedItems.length} items`;
 
+        // 6. Validation / Conflict Detection
+        validateConflicts(rawInput, processedItems, {
+            delimiter: delim,
+            quoteType: quoteType,
+            encloseType: encloseType
+        });
+
         // Save Settings
         saveSettings();
+    }
+
+    function validateConflicts(rawInput, processedItems, settings) {
+        const warningEl = document.getElementById('conversionWarning');
+        const warningMsgEl = document.getElementById('conversionWarningMsg');
+        let conflicts = [];
+
+        // 1. Delimiter Conflict
+        // If delimiter is present in the raw input text (and it's not a functional split, but this is a rough check)
+        // More accurately: check if the ITEMS contain the delimiter. 
+        // If an item contains the delimiter, the resulting CSV will be ambiguous or broken.
+        if (settings.delimiter && settings.delimiter !== '\n') {
+            const hasDelimiter = processedItems.some(item => item.includes(settings.delimiter));
+            if (hasDelimiter) {
+                conflicts.push(`Input contains the delimiter "<strong>${escapeHtml(settings.delimiter)}</strong>"`);
+            }
+        }
+
+        // 2. Quote Conflict
+        // If wrapping with quotes, check if items contain that quote
+        if (settings.quoteType === 'single') {
+            const hasSingle = processedItems.some(item => item.includes("'"));
+            if (hasSingle) {
+                conflicts.push(`Input contains <strong>Single Quotes</strong>`);
+            }
+        } else if (settings.quoteType === 'double') {
+            const hasDouble = processedItems.some(item => item.includes('"'));
+            if (hasDouble) {
+                conflicts.push(`Input contains <strong>Double Quotes</strong>`);
+            }
+        }
+
+        // 3. Enclosure Conflict (less critical, but good to know)
+        if (settings.encloseType === 'parentheses') {
+            if (processedItems.some(item => item.includes('(') || item.includes(')'))) {
+                conflicts.push('Input contains <strong>Parentheses</strong>');
+            }
+        } else if (settings.encloseType === 'brackets') {
+            if (processedItems.some(item => item.includes('[') || item.includes(']'))) {
+                conflicts.push('Input contains <strong>Brackets</strong>');
+            }
+        }
+
+        // Update UI
+        if (conflicts.length > 0) {
+            warningMsgEl.innerHTML = `Possible format issue: ${conflicts.join(', ')}.`;
+            warningEl.classList.remove('d-none');
+
+            // Visual indicators
+            inputEl.classList.add('border-warning');
+            outputEl.classList.add('border-warning');
+        } else {
+            warningEl.classList.add('d-none');
+            inputEl.classList.remove('border-warning');
+            outputEl.classList.remove('border-warning');
+        }
     }
 
     // --- Persistence Logic ---
