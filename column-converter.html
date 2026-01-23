@@ -93,6 +93,13 @@
                         Column</label>
                     <textarea id="inputData" class="form-control glass-input flex-grow-1 p-3"
                         placeholder="Paste your column data here...&#10;One&#10;Two&#10;Three"></textarea>
+
+                    <!-- Conversion Warning -->
+                    <div id="conversionWarning" class="alert alert-warning d-none mt-3 mb-0 py-2 small" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <span id="conversionWarningMsg"></span>
+                    </div>
+
                     <div class="d-flex justify-content-between mt-3">
                         <span class="text-secondary small" id="inputStats">0 lines</span>
                         <button class="btn btn-sm btn-outline-light text-secondary border-0"
