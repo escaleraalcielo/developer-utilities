@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const outputStatsEl = document.getElementById('outputStats');
     const copyBtn = document.getElementById('copyBtn');
 
+
     // Event Listeners for Processing
     const elementsToWatch = [
         inputEl, delimiterEl, customDelimiterEl, quoteTypeEl, encloseTypeEl,
