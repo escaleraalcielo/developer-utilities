@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     const guidCountEl = document.getElementById('guidCount');
     const generateBtn = document.getElementById('generateBtn');
-    const saveBtn = document.getElementById('saveBtn');
+    const copyResultBtn = document.getElementById('copyResultBtn');
     const outputEl = document.getElementById('output');
-    const historyListEl = document.getElementById('historyList');
+    const historyTableBody = document.getElementById('historyTableBody');
     const statusTextEl = document.getElementById('statusText');
 
     let sessionHistory = [];
@@ -17,8 +17,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // UX: Clear input on focus
+    guidCountEl.addEventListener('focus', () => {
+        guidCountEl.value = '';
+    });
+
     generateBtn.addEventListener('click', () => {
-        const count = parseInt(guidCountEl.value) || 1;
+        let count = parseInt(guidCountEl.value) || 1;
+
+        // Enforce limit of 20
+        if (count > 20) {
+            count = 20;
+            guidCountEl.value = 20;
+        }
+
         const guids = [];
 
         for (let i = 0; i < count; i++) {
@@ -26,22 +38,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         outputEl.value = guids.join('\n');
-        saveBtn.disabled = false;
+        copyResultBtn.disabled = false;
         statusTextEl.textContent = `Generated ${count} GUIDs.`;
     });
 
-    // --- History Logic ---
-    saveBtn.addEventListener('click', () => {
+    // --- Copy & History Logic ---
+    copyResultBtn.addEventListener('click', () => {
         const result = outputEl.value;
         if (!result) return;
 
-        const count = result.split('\n').length;
+        // 1. Copy to Clipboard
+        navigator.clipboard.writeText(result).then(() => {
+            statusTextEl.textContent = 'Copied and Saved to History.';
+        }).catch(err => {
+            statusTextEl.textContent = 'Copy failed, but saved to history.';
+        });
+
+        // 2. Add to History
+        const items = result.split('\n');
+        const count = items.length;
         const timestamp = new Date().toLocaleTimeString();
+        const firstLine = items[0];
 
         const newItem = {
             id: Date.now(),
             timestamp,
             count,
+            preview: firstLine,
             result
         };
 
@@ -49,8 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (sessionHistory.length > HISTORY_LIMIT) sessionHistory.pop();
 
         renderHistory();
-        statusTextEl.textContent = 'Saved to history.';
-        saveBtn.disabled = true; // Prevent double save
     });
 
     // --- Global Actions (attached to window for inline onclick) ---
@@ -58,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const item = sessionHistory.find(i => i.id === id);
         if (item) {
             navigator.clipboard.writeText(item.result);
-            statusTextEl.textContent = 'Copied to clipboard.';
+            statusTextEl.textContent = 'Copied from history.';
         }
     };
 
@@ -70,22 +91,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderHistory() {
         if (sessionHistory.length === 0) {
-            historyListEl.innerHTML = '<div style="text-align: center; color: #888; margin-top: 20px;">No saved history.</div>';
+            historyTableBody.innerHTML = `
+                <tr class="text-center">
+                    <td colspan="4" class="py-4 text-secondary opacity-50 fst-italic">No saved history.</td>
+                </tr>`;
             return;
         }
 
-        historyListEl.innerHTML = '';
+        historyTableBody.innerHTML = '';
         sessionHistory.forEach(item => {
-            const div = document.createElement('div');
-            div.className = 'history-item';
-            div.innerHTML = `
-                <span>${item.timestamp} - <strong>${item.count} GUIDs</strong></span>
-                <div class="history-actions">
-                    <button onclick="copyHistoryItem(${item.id})" title="Copy">C</button>
-                    <button onclick="deleteHistoryItem(${item.id})" title="Delete">X</button>
-                </div>
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="align-middle text-secondary">${item.timestamp}</td>
+                <td class="align-middle text-info">${item.count}</td>
+                <td class="align-middle text-truncate" style="max-width: 300px;">
+                    <code class="text-light">${item.preview}</code>
+                </td>
+                <td class="align-middle text-end">
+                    <button class="btn btn-sm btn-link text-primary p-0 me-2" onclick="copyHistoryItem(${item.id})" title="Copy">
+                        <i class="bi bi-clipboard"></i>
+                    </button>
+                    <button class="btn btn-sm btn-link text-danger p-0" onclick="deleteHistoryItem(${item.id})" title="Delete">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
             `;
-            historyListEl.appendChild(div);
+            historyTableBody.appendChild(tr);
         });
     }
 });
