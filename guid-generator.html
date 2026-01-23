@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GUID Generator | Dev Utils</title>
+    <link rel="stylesheet" href="https://unpkg.com/7.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #3b6ea5;
+            /* Standard Win7 wallpaper color approximation */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+            overflow: hidden;
+        }
+
+        /* Global Nav Override to look slightly better on Win7 bg */
+        .global-nav {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1050;
+        }
+
+        .global-nav-btn {
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 4px;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .global-nav-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .global-nav-dropdown {
+            position: absolute;
+            right: 0;
+            top: 40px;
+            background: white;
+            border: 1px solid #8e8f8f;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            padding: 5px;
+            display: none;
+            width: 150px;
+            list-style: none;
+        }
+
+        .global-nav-dropdown.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 5px 10px;
+            text-decoration: none;
+            color: black;
+            font-size: 12px;
+        }
+
+        .dropdown-item:hover {
+            background-color: #3399ff;
+            color: white;
+        }
+
+        /* App Window */
+        .window {
+            width: 600px;
+            max-width: 95vw;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .window-body {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            resize: vertical;
+            padding: 5px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .history-list {
+            margin-top: 10px;
+            height: 150px;
+            overflow-y: auto;
+            border: 1px solid #8e8f8f;
+            background: white;
+            padding: 5px;
+            font-size: 12px;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dotted #ccc;
+            padding-bottom: 2px;
+            margin-bottom: 2px;
+        }
+
+        .history-actions button {
+            min-width: 20px;
+            padding: 0 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <div class="global-nav">
+        <button class="global-nav-btn"
+            onclick="document.querySelector('.global-nav-dropdown').classList.toggle('show')">
+            <i class="bi bi-list"></i>
+        </button>
+        <ul class="global-nav-dropdown">
+            <li><a class="dropdown-item" href="index.html">Home</a></li>
+            <li><a class="dropdown-item" href="column-converter.html">Column Converter</a></li>
+            <li>
+                <hr style="margin: 2px 0;">
+            </li>
+            <li><a class="dropdown-item" href="guid-generator.html">GUID Generator</a></li>
+        </ul>
+    </div>
+
+    <!-- Window -->
+    <div class="window glass active">
+        <div class="title-bar">
+            <div class="title-bar-text">GUID Generator</div>
+            <div class="title-bar-controls">
+                <button aria-label="Minimize"></button>
+                <button aria-label="Maximize"></button>
+                <button aria-label="Close" onclick="window.location.href='index.html'"></button>
+            </div>
+        </div>
+        <div class="window-body">
+            <p>Generate secure UUIDs (v4) locally.</p>
+
+            <div class="controls">
+                <label for="guidCount">Count:</label>
+                <input type="number" id="guidCount" value="1" min="1" max="1000" style="width: 60px;">
+
+                <button id="generateBtn" style="font-weight: bold;">Generate</button>
+                <div style="flex-grow: 1;"></div>
+                <button id="saveBtn" disabled>Save Result</button>
+            </div>
+
+            <textarea id="output" readonly></textarea>
+
+            <fieldset>
+                <legend>Session History</legend>
+                <div id="historyList" class="history-list">
+                    <div style="text-align: center; color: #888; margin-top: 20px;">No saved history.</div>
+                </div>
+            </fieldset>
+
+            <div class="status-bar">
+                <p class="status-bar-field" id="statusText">Ready</p>
+                <p class="status-bar-field justify-content-end">Win7 Mode</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="guid-generator.js"></script>
+</body>
+
+</html>

@@ -115,3 +115,61 @@ h6 {
 ::-webkit-scrollbar-thumb:hover {
     background: #64748b;
 }
+
+/* Global Navigation */
+.global-nav {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1050;
+}
+
+.global-nav-btn {
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: var(--glass-shadow);
+}
+
+.global-nav-btn:hover,
+.global-nav-btn[aria-expanded="true"] {
+    background: var(--accent-color);
+    color: white;
+    transform: rotate(90deg);
+}
+
+.global-nav-dropdown {
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    min-width: 200px;
+}
+
+.global-nav-dropdown .dropdown-item {
+    color: var(--text-primary);
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    transition: all 0.2s;
+}
+
+.global-nav-dropdown .dropdown-item:hover {
+    background: rgba(56, 189, 248, 0.1);
+    color: var(--accent-color);
+}
+
+.global-nav-dropdown .dropdown-item.active {
+    background: var(--accent-color);
+    color: white;
+}
