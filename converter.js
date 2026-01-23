@@ -50,21 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Copy to Clipboard
-    copyBtn.addEventListener('click', () => {
-        if (!outputEl.value) return;
+    // Copy to Clipboard logic is handled at the bottom
 
-        outputEl.select();
-        navigator.clipboard.writeText(outputEl.value).then(() => {
-            const toastEl = document.getElementById('copyToast');
-            const toast = new bootstrap.Toast(toastEl);
-            toast.show();
-        }).catch(err => {
-            console.error('Failed to copy text: ', err);
-            // Fallback
-            document.execCommand('copy');
-        });
-    });
 
     // Main Conversion Logic
     function updateConversion() {
@@ -135,21 +122,108 @@ document.addEventListener('DOMContentLoaded', () => {
         // 5. Output
         outputEl.value = result;
         outputStatsEl.textContent = `${processedItems.length} items`;
+
+        // Save Settings
+        saveSettings();
     }
 
-    // --- History Logic ---
+    // --- Persistence Logic ---
+    const STORAGE_KEY = 'devUtils_colConverter_settings';
+
+    function saveSettings() {
+        const settings = {
+            delimiter: delimiterEl.value,
+            customDelimiter: customDelimiterEl.value,
+            quoteType: quoteTypeEl.value,
+            encloseType: encloseTypeEl.value,
+            customEncloseStart: customEncloseStartEl.value,
+            customEncloseEnd: customEncloseEndEl.value,
+            optionTrim: optionTrimEl.checked,
+            optionUnique: optionUniqueEl.checked,
+            optionSort: optionSortEl.checked,
+            optionIgnoreEmpty: optionIgnoreEmptyEl.checked
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+    }
+
+    function loadSettings() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (!saved) return;
+
+        try {
+            const settings = JSON.parse(saved);
+
+            if (settings.delimiter) delimiterEl.value = settings.delimiter;
+            if (settings.customDelimiter) customDelimiterEl.value = settings.customDelimiter;
+            if (settings.quoteType) quoteTypeEl.value = settings.quoteType;
+            if (settings.encloseType) encloseTypeEl.value = settings.encloseType;
+            if (settings.customEncloseStart) customEncloseStartEl.value = settings.customEncloseStart;
+            if (settings.customEncloseEnd) customEncloseEndEl.value = settings.customEncloseEnd;
+
+            if (typeof settings.optionTrim === 'boolean') optionTrimEl.checked = settings.optionTrim;
+            if (typeof settings.optionUnique === 'boolean') optionUniqueEl.checked = settings.optionUnique;
+            if (typeof settings.optionSort === 'boolean') optionSortEl.checked = settings.optionSort;
+            if (typeof settings.optionIgnoreEmpty === 'boolean') optionIgnoreEmptyEl.checked = settings.optionIgnoreEmpty;
+
+            // Trigger visibility updates
+            delimiterEl.dispatchEvent(new Event('change'));
+            encloseTypeEl.dispatchEvent(new Event('change'));
+
+        } catch (e) {
+            console.error('Failed to load settings:', e);
+        }
+    }
+
+    // Load on init
+    loadSettings();
+
     const saveBtn = document.getElementById('saveBtn');
+    const resetDefaultsBtn = document.getElementById('resetDefaultsBtn');
     const historyTableBody = document.getElementById('historyTableBody');
     const historyCountEl = document.getElementById('historyCount');
     let sessionHistory = [];
     const HISTORY_LIMIT = 20;
 
-    saveBtn.addEventListener('click', () => {
+    resetDefaultsBtn.addEventListener('click', () => {
+        resetToDefaults();
+        // Provide feedback
+        const originalText = resetDefaultsBtn.innerHTML;
+        resetDefaultsBtn.innerHTML = '<i class="bi bi-check"></i> Loaded';
+        setTimeout(() => resetDefaultsBtn.innerHTML = originalText, 1500);
+    });
+
+    function resetToDefaults() {
+        delimiterEl.value = ',';
+        delimiterEl.dispatchEvent(new Event('change')); // Update UI visibility
+        customDelimiterEl.value = '';
+
+        quoteTypeEl.value = 'single';
+
+        encloseTypeEl.value = 'none';
+        encloseTypeEl.dispatchEvent(new Event('change')); // Update UI visibility
+        customEncloseStartEl.value = '';
+        customEncloseEndEl.value = '';
+
+        // Save immediately
+        saveSettings();
+
+        // Trigger conversion if input exists
+        if (inputEl.value) {
+            updateConversion();
+        }
+    }
+
+    function saveToHistory() {
         const result = outputEl.value;
-        if (!result) return; // Don't save empty results
+        if (!result) return;
+
+        // Check if already top item to prevent duplicates
+        if (sessionHistory.length > 0 && sessionHistory[0].fullResult === result) {
+            return;
+        }
 
         const timestamp = new Date().toLocaleTimeString();
-        const itemCount = outputStatsEl.textContent; // "X items"
+        const itemCount = outputStatsEl.textContent;
 
         // Truncate preview
         let preview = result.length > 100 ? result.substring(0, 100) + '...' : result;
@@ -171,12 +245,59 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         renderHistory();
+    }
+
+    saveBtn.addEventListener('click', () => {
+        if (!outputEl.value) return;
+
+        saveToHistory();
 
         // Show subtle feedback
         const originalText = saveBtn.innerHTML;
         saveBtn.innerHTML = '<i class="bi bi-check"></i> Saved';
         setTimeout(() => saveBtn.innerHTML = originalText, 1500);
     });
+
+    // Enhanced Copy Handler with Auto-Save
+    copyBtn.addEventListener('click', () => {
+        if (!outputEl.value) return;
+
+        // 1. Auto-save immediately
+        saveToHistory();
+
+        // 2. Perform Copy
+        outputEl.select();
+
+        // Robust clipboard handling
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(outputEl.value).then(() => {
+                showCopyFeedback();
+            }).catch(err => {
+                console.warn('Clipboard API failed, falling back to execCommand', err);
+                fallbackCopy();
+            });
+        } else {
+            fallbackCopy();
+        }
+    });
+
+    function fallbackCopy() {
+        try {
+            document.execCommand('copy');
+            showCopyFeedback();
+        } catch (err) {
+            console.error('Fallback copy failed', err);
+            // alert('Could not copy automatically. Please press Ctrl+C.');
+        }
+    }
+
+    function showCopyFeedback() {
+        const toastEl = document.getElementById('copyToast');
+        if (toastEl && typeof bootstrap !== 'undefined') {
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        }
+    }
 
     function renderHistory() {
         historyCountEl.textContent = `${sessionHistory.length}/${HISTORY_LIMIT}`;
