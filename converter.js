@@ -135,4 +135,102 @@ document.addEventListener('DOMContentLoaded', () => {
         outputEl.value = result;
         outputStatsEl.textContent = `${processedItems.length} items`;
     }
+
+    // --- History Logic ---
+    const saveBtn = document.getElementById('saveBtn');
+    const historyTableBody = document.getElementById('historyTableBody');
+    const historyCountEl = document.getElementById('historyCount');
+    let sessionHistory = [];
+    const HISTORY_LIMIT = 20;
+
+    saveBtn.addEventListener('click', () => {
+        const result = outputEl.value;
+        if (!result) return; // Don't save empty results
+
+        const timestamp = new Date().toLocaleTimeString();
+        const itemCount = outputStatsEl.textContent; // "X items"
+
+        // Truncate preview
+        let preview = result.length > 100 ? result.substring(0, 100) + '...' : result;
+
+        const newItem = {
+            id: Date.now(),
+            timestamp,
+            itemCount,
+            preview,
+            fullResult: result
+        };
+
+        // Add to history (newest first)
+        sessionHistory.unshift(newItem);
+
+        // Enforce Limit
+        if (sessionHistory.length > HISTORY_LIMIT) {
+            sessionHistory.pop();
+        }
+
+        renderHistory();
+
+        // Show subtle feedback
+        const originalText = saveBtn.innerHTML;
+        saveBtn.innerHTML = '<i class="bi bi-check"></i> Saved';
+        setTimeout(() => saveBtn.innerHTML = originalText, 1500);
+    });
+
+    function renderHistory() {
+        historyCountEl.textContent = `${sessionHistory.length}/${HISTORY_LIMIT}`;
+
+        if (sessionHistory.length === 0) {
+            historyTableBody.innerHTML = `
+                <tr class="text-center">
+                    <td colspan="4" class="py-4 text-secondary opacity-50 fst-italic">No saved results in this session.</td>
+                </tr>`;
+            return;
+        }
+
+        historyTableBody.innerHTML = '';
+        sessionHistory.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="align-middle text-secondary">${item.timestamp}</td>
+                <td class="align-middle text-info">${item.itemCount}</td>
+                <td class="align-middle text-truncate" style="max-width: 300px;">
+                    <code class="text-light">${escapeHtml(item.preview)}</code>
+                </td>
+                <td class="align-middle text-end">
+                    <button class="btn btn-sm btn-link text-primary p-0 me-2" onclick="copyFromHistory(${item.id})" title="Copy">
+                        <i class="bi bi-clipboard"></i>
+                    </button>
+                    <button class="btn btn-sm btn-link text-danger p-0" onclick="deleteFromHistory(${item.id})" title="Delete">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            `;
+            historyTableBody.appendChild(row);
+        });
+    }
+
+    // Helper to escape HTML for preview
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Expose actions globally for inline onclick handlers
+    window.copyFromHistory = (id) => {
+        const item = sessionHistory.find(i => i.id === id);
+        if (item) {
+            navigator.clipboard.writeText(item.fullResult).then(() => {
+                const toastEl = document.getElementById('copyToast');
+                const toast = new bootstrap.Toast(toastEl);
+                toast.show();
+            });
+        }
+    };
+
+    window.deleteFromHistory = (id) => {
+        sessionHistory = sessionHistory.filter(i => i.id !== id);
+        renderHistory();
+    };
 });
