@@ -96,6 +96,9 @@ document.addEventListener('DOMContentLoaded', () => {
             processedItems.sort(); // Lexicographical sort
         }
 
+        // Store items for validation before quoting
+        const itemsForValidation = [...processedItems];
+
         // Apply Quotes
         if (quoteType === 'single') {
             processedItems = processedItems.map(item => `'${item}'`);
@@ -124,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
         outputStatsEl.textContent = `${processedItems.length} items`;
 
         // 6. Validation / Conflict Detection
-        validateConflicts(rawInput, processedItems, {
+        validateConflicts(rawInput, itemsForValidation, {
             delimiter: delim,
             quoteType: quoteType,
             encloseType: encloseType
