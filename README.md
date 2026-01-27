@@ -22,6 +22,12 @@ Quickly generate random UUIDs (version 4).
 *   **Convenience**: One-click copy to clipboard.
 *   **History**: View previously generated GUIDs in the current session.
 
+### 3. Salesforce ID Converter
+Convert 15-character Salesforce IDs to 18-character case-insensitive IDs.
+*   **Bulk Conversion**: Paste columns of IDs.
+*   **SOQL Ready**: Toggle to format IDs for SQL/SOQL queries (e.g., `'ID1', 'ID2'`).
+*   **Validation**: Detects and flags invalid ID lengths.
+
 ## Usage
 Since this is a client-side only application, you can run it directly from your file system.
 
