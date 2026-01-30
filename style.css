@@ -73,6 +73,13 @@ h6 {
     box-shadow: 0 0 0 0.25rem rgba(56, 189, 248, 0.25);
 }
 
+::placeholder {
+    color: rgba(255, 255, 255, 0.75);
+    opacity: 1;
+    /* Firefox */
+}
+
+
 /* Buttons */
 .btn-primary {
     background: linear-gradient(135deg, var(--accent-color), #6366f1);

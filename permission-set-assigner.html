@@ -135,22 +135,14 @@
                     </div>
                 </div>
 
-                <!-- Perm Set ID Input -->
-                <div class="glass-panel p-4 mb-4 flex-shrink-0" style="height: 35%;">
-                    <label for="permSetIds" class="form-label text-secondary small fw-bold text-uppercase mb-2"
-                        id="lblPermSetIds">Permission Set IDs (Targets)</label>
-                    <textarea id="permSetIds" class="form-control glass-input p-3" placeholder="0PS... (One per line)"
-                        style="resize: none; height: 100%; font-family: 'Consolas', monospace;"></textarea>
-                    <div class="form-text text-secondary small mt-1">Must start with <span id="prefixHint"
-                            class="text-info">0PS</span>. 15 or 18 chars.</div>
-                </div>
-
                 <!-- User IDs Input (Drag & Drop) -->
-                <div class="glass-panel p-4 flex-grow-1 d-flex flex-column drag-area" id="dropZone">
+                <div class="glass-panel p-4 mb-4 flex-grow-1 d-flex flex-column drag-area" id="dropZone">
                     <label for="userIds" class="form-label text-secondary small fw-bold text-uppercase mb-3">User IDs
                         (Assignees)</label>
-                    <textarea id="userIds" class="form-control glass-input flex-grow-1 p-3"
-                        placeholder="Paste User IDs here (one per line)...&#10;Or drop a text/csv file here."></textarea>
+                    <textarea id="userIds" class="form-control glass-input flex-grow-1 p-3" placeholder="Paste User IDs here...
+Example:
+0055f0000053QLvAAM
+0055f0000053QLwAAM"></textarea>
 
                     <div class="d-flex justify-content-between mt-3">
                         <span class="text-secondary small" id="inputStats">0 lines</span>
@@ -158,6 +150,22 @@
                             onclick="document.getElementById('userIds').value=''; updateStats();">
                             <i class="bi bi-trash"></i> Clear
                         </button>
+                    </div>
+                </div>
+
+                <!-- Perm Set ID Input -->
+                <div class="glass-panel p-4 flex-shrink-0" style="height: 35%;">
+                    <label for="permSetIds" class="form-label text-secondary small fw-bold text-uppercase mb-2"
+                        id="lblPermSetIds">Permission Set IDs (Targets)</label>
+                    <textarea id="permSetIds" class="form-control glass-input p-3" placeholder="Paste Permission Set IDs here...
+Example:
+0PS5f000003biIsGAI
+0PS5f000003biItGAI" style="resize: none; height: 100%; font-family: 'Consolas', monospace;"></textarea>
+
+                    <div class="d-flex justify-content-between mt-2 align-items-start">
+                        <div class="form-text text-secondary small mt-0 flex-grow-1">Must start with <span
+                                id="prefixHint" class="text-info">0PS</span>. 15 or 18 chars.</div>
+                        <span class="text-secondary small text-nowrap ms-3" id="permStats">0 lines</span>
                     </div>
                 </div>
             </div>

@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const validationMessage = document.getElementById('validationMessage');
     const validationText = document.getElementById('validationText');
     const inputStats = document.getElementById('inputStats');
+    const permStats = document.getElementById('permStats');
     const outputStats = document.getElementById('outputStats');
     const dropZone = document.getElementById('dropZone');
 
@@ -20,7 +21,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let csvContent = ''; // Store generated CSV blob content
 
     // --- Event Listeners ---
-    permSetIdsInput.addEventListener('input', validateBase);
+    permSetIdsInput.addEventListener('input', () => {
+        validateBase();
+        updatePermStats();
+    });
     userIdsInput.addEventListener('input', () => {
         validateBase();
         updateStats();
@@ -63,6 +67,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const text = userIdsInput.value;
         const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
         inputStats.textContent = `${lines.length} lines`;
+    }
+
+    function updatePermStats() {
+        const text = permSetIdsInput.value;
+        const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
+        permStats.textContent = `${lines.length} lines`;
     }
 
     // Basic validation to enable/disable generate button (UX only)
@@ -137,6 +147,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (validUserIds.length === 0) {
             showError('Please provide at least one User ID.');
+            return;
+        }
+
+        // Check Limit
+        const projectedRows = validUserIds.length * validPermIds.length;
+        if (projectedRows > 100000) {
+            showError(`Result too large (${projectedRows.toLocaleString()} rows). Limit is 100,000 records.`);
             return;
         }
 
@@ -255,4 +272,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize stats
     updateStats();
+    updatePermStats();
 });
