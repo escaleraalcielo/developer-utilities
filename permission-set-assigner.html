@@ -114,14 +114,35 @@
         <div class="row g-4 h-100">
             <!-- Left Column: Inputs -->
             <div class="col-lg-5 d-flex flex-column h-100">
+                <!-- Type Selection -->
+                <div class="glass-panel p-3 mb-3 flex-shrink-0">
+                    <label class="form-label text-secondary small fw-bold text-uppercase mb-2">Assignment Type</label>
+                    <div class="d-flex gap-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="assignType" id="typePermSet"
+                                value="PermissionSet" checked>
+                            <label class="form-check-label text-white small" for="typePermSet">
+                                Permission Set
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="assignType" id="typeLicense"
+                                value="PermissionSetLicense">
+                            <label class="form-check-label text-white small" for="typeLicense">
+                                Permission Set License
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Perm Set ID Input -->
-                <div class="glass-panel p-4 mb-4 flex-shrink-0">
-                    <label for="permSetId"
-                        class="form-label text-secondary small fw-bold text-uppercase mb-2">Permission Set ID
-                        (Target)</label>
-                    <input type="text" id="permSetId" class="form-control glass-input" placeholder="0PS..."
-                        style="height: auto; font-family: 'Consolas', monospace;">
-                    <div class="form-text text-secondary small mt-1">Must be exactly 15 or 18 characters.</div>
+                <div class="glass-panel p-4 mb-4 flex-shrink-0" style="height: 35%;">
+                    <label for="permSetIds" class="form-label text-secondary small fw-bold text-uppercase mb-2"
+                        id="lblPermSetIds">Permission Set IDs (Targets)</label>
+                    <textarea id="permSetIds" class="form-control glass-input p-3" placeholder="0PS... (One per line)"
+                        style="resize: none; height: 100%; font-family: 'Consolas', monospace;"></textarea>
+                    <div class="form-text text-secondary small mt-1">Must start with <span id="prefixHint"
+                            class="text-info">0PS</span>. 15 or 18 chars.</div>
                 </div>
 
                 <!-- User IDs Input (Drag & Drop) -->

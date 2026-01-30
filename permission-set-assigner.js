@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Elements
-    const permSetIdInput = document.getElementById('permSetId');
+    const permSetIdsInput = document.getElementById('permSetIds'); // Changed ID
     const userIdsInput = document.getElementById('userIds');
     const generateBtn = document.getElementById('generateBtn');
     const downloadBtn = document.getElementById('downloadBtn');
@@ -11,14 +11,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const outputStats = document.getElementById('outputStats');
     const dropZone = document.getElementById('dropZone');
 
+    // Type Toggles
+    const typePermSet = document.getElementById('typePermSet');
+    const typeLicense = document.getElementById('typeLicense');
+    const prefixHint = document.getElementById('prefixHint');
+    const lblPermSetIds = document.getElementById('lblPermSetIds');
+
     let csvContent = ''; // Store generated CSV blob content
 
     // --- Event Listeners ---
-    permSetIdInput.addEventListener('input', validateBase);
+    permSetIdsInput.addEventListener('input', validateBase);
     userIdsInput.addEventListener('input', () => {
         validateBase();
         updateStats();
     });
+
+    // Toggle handling
+    [typePermSet, typeLicense].forEach(el => el.addEventListener('change', updateUIForType));
 
     generateBtn.addEventListener('click', generateCSV);
 
@@ -38,6 +47,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Logic ---
 
+    function updateUIForType() {
+        const isLicense = typeLicense.checked;
+        if (isLicense) {
+            prefixHint.textContent = '0PL';
+            lblPermSetIds.textContent = 'Permission Set License IDs (Targets)';
+        } else {
+            prefixHint.textContent = '0PS';
+            lblPermSetIds.textContent = 'Permission Set IDs (Targets)';
+        }
+        validateBase();
+    }
+
     function updateStats() {
         const text = userIdsInput.value;
         const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
@@ -46,25 +67,73 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Basic validation to enable/disable generate button (UX only)
     function validateBase() {
-        // We handle strict validation on Generate click
         validationMessage.classList.add('d-none');
     }
 
     function generateCSV() {
-        const permId = permSetIdInput.value.trim();
+        const isLicense = typeLicense.checked;
+        const targetPrefix = isLicense ? '0PL' : '0PS';
+        const userPrefix = '005';
+
+        const permText = permSetIdsInput.value;
         const userText = userIdsInput.value;
 
-        // 1. Validate Perm Set ID
-        if (permId.length !== 15 && permId.length !== 18) {
-            showError(`Permission Set ID must be 15 or 18 characters. Current: ${permId.length}`);
+        // 1. Parse & Validate Perm IDs
+        const permLines = permText.split(/\r?\n/);
+        const validPermIds = [];
+        const invalidPermIds = [];
+
+        permLines.forEach(line => {
+            const id = line.trim();
+            if (!id) return;
+
+            // Length check
+            if (id.length !== 15 && id.length !== 18) {
+                invalidPermIds.push(`${id} (length)`);
+                return;
+            }
+            // Prefix check
+            if (!id.startsWith(targetPrefix)) {
+                invalidPermIds.push(`${id} (prefix)`);
+                return;
+            }
+            validPermIds.push(id);
+        });
+
+        if (invalidPermIds.length > 0) {
+            showError(`Invalid Target IDs found: ${invalidPermIds.slice(0, 3).join(', ')}${invalidPermIds.length > 3 ? '...' : ''}. Must start with ${targetPrefix} and be 15/18 chars.`);
             return;
         }
 
-        // 2. Parse User IDs
-        const lines = userText.split(/\r?\n/);
-        const validUserIds = lines
-            .map(l => l.trim())
-            .filter(l => l.length > 0); // We assume anything non-empty is a potentially valid ID for generation, though Salesforce is strict.
+        if (validPermIds.length === 0) {
+            showError('Please provide at least one valid Target ID.');
+            return;
+        }
+
+        // 2. Parse & Validate User IDs
+        const userLines = userText.split(/\r?\n/);
+        const validUserIds = [];
+        const invalidUserIds = [];
+
+        userLines.forEach(line => {
+            const id = line.trim();
+            if (!id) return;
+
+            if (id.length !== 15 && id.length !== 18) {
+                invalidUserIds.push(`${id} (length)`);
+                return;
+            }
+            if (!id.startsWith(userPrefix)) {
+                invalidUserIds.push(`${id} (prefix)`);
+                return;
+            }
+            validUserIds.push(id);
+        });
+
+        if (invalidUserIds.length > 0) {
+            showError(`Invalid User IDs found: ${invalidUserIds.slice(0, 3).join(', ')}${invalidUserIds.length > 3 ? '...' : ''}. Must start with ${userPrefix}.`);
+            return;
+        }
 
         if (validUserIds.length === 0) {
             showError('Please provide at least one User ID.');
@@ -72,13 +141,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // 3. Generate content
-        // Header: "_","AssigneeId","PermissionSetId"
         const rows = [];
-        rows.push('"_","AssigneeId","PermissionSetId"');
 
-        validUserIds.forEach(userId => {
-            // Format: "[PermissionSetAssignment]","005...","0PS..."
-            rows.push(`"[PermissionSetAssignment]","${userId}","${permId}"`);
+        if (isLicense) {
+            // Header: "_","AssigneeId","PermissionSetLicenseId"
+            rows.push('"_","AssigneeId","PermissionSetLicenseId"');
+        } else {
+            // Header: "_","AssigneeId","PermissionSetId"
+            rows.push('"_","AssigneeId","PermissionSetId"');
+        }
+
+        let totalRows = 0;
+
+        // Loop Perms x Users
+        validPermIds.forEach(permId => {
+            validUserIds.forEach(userId => {
+                if (isLicense) {
+                    // "[PermissionSetLicenseAssign]","005...","0PL..."
+                    rows.push(`"[PermissionSetLicenseAssign]","${userId}","${permId}"`);
+                } else {
+                    // "[PermissionSetAssignment]","005...","0PS..."
+                    rows.push(`"[PermissionSetAssignment]","${userId}","${permId}"`);
+                }
+                totalRows++;
+            });
         });
 
         csvContent = rows.join('\n');
@@ -88,11 +174,11 @@ document.addEventListener('DOMContentLoaded', () => {
         outputPreview.value = csvContent;
 
         // Update Stats and UI
-        outputStats.textContent = `${validUserIds.length} rows generated`;
+        outputStats.textContent = `${totalRows} rows generated`;
         validationMessage.classList.add('d-none');
         downloadBtn.disabled = false;
 
-        // Flash success feedback on Generate button
+        // Flash success feedback
         const originalText = generateBtn.innerHTML;
         generateBtn.innerHTML = '<i class="bi bi-check-circle"></i> Generated!';
         generateBtn.classList.remove('btn-primary');
