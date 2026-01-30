@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Events
-    const inputs = [inputA, inputB, optSmartSF, optCaseSensitive, optRemoveDupes];
+    const inputs = [inputA, inputB, optSmartSF, optCaseSensitive, optRemoveDupes, document.getElementById('optSort')];
     inputs.forEach(el => el.addEventListener('input', updateDiff));
 
     clearAllBtn.addEventListener('click', () => {
@@ -44,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const isSmartSF = optSmartSF.checked;
         const isCaseSensitive = optCaseSensitive.checked;
         const shouldRemoveDupes = optRemoveDupes.checked;
+        const sortMode = document.getElementById('optSort').value;
 
         // 2. Process Inputs
         const listA = parseInput(inputA.value);
@@ -77,10 +78,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // That gets complex (bag diff). 
         // SIMPLIFICATION: If Remove Duplicates is OFF, we show all instances.
 
-        resultSets.onlyA = recoverValues(onlyAKeys, mapA, shouldRemoveDupes);
-        resultSets.onlyB = recoverValues(onlyBKeys, mapB, shouldRemoveDupes);
+        resultSets.onlyA = recoverValues(onlyAKeys, mapA, shouldRemoveDupes, sortMode);
+        resultSets.onlyB = recoverValues(onlyBKeys, mapB, shouldRemoveDupes, sortMode);
         // For common, usually we show the value from A (or B). Let's pick A.
-        resultSets.common = recoverValues(commonKeys, mapA, shouldRemoveDupes);
+        resultSets.common = recoverValues(commonKeys, mapA, shouldRemoveDupes, sortMode);
 
         // 4. Render
         renderList(resOnlyA, resultSets.onlyA, countOnlyA);
@@ -122,9 +123,16 @@ document.addEventListener('DOMContentLoaded', () => {
         return map;
     }
 
-    function recoverValues(keys, map, shouldRemoveDupes) {
+    function recoverValues(keys, map, shouldRemoveDupes, sortMode) {
         let result = [];
-        keys.sort(); // Alphabetical sort of keys for consistent output
+
+        // Sorting logic
+        if (sortMode === 'AAA') {
+            keys.sort(); // A-Z
+        } else if (sortMode === 'ZZZ') {
+            keys.sort().reverse(); // Z-A
+        }
+        // If 'OFF', do not sort (preserves original/insertion order)
 
         keys.forEach(key => {
             const originals = map.get(key);
