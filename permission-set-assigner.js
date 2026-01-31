@@ -75,12 +75,12 @@ document.addEventListener('DOMContentLoaded', () => {
         navigator.clipboard.writeText(csvContent).then(() => {
             const originalText = copyCsvBtn.innerHTML;
             copyCsvBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i> Copied!';
-            copyCsvBtn.classList.remove('btn-outline-light');
+            copyCsvBtn.classList.remove('btn-primary');
             copyCsvBtn.classList.add('btn-success');
 
             setTimeout(() => {
                 copyCsvBtn.innerHTML = originalText;
-                copyCsvBtn.classList.add('btn-outline-light');
+                copyCsvBtn.classList.add('btn-primary');
                 copyCsvBtn.classList.remove('btn-success');
             }, 1500);
         });
