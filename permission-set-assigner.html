@@ -190,9 +190,21 @@ Example:
 
                     <div class="d-flex justify-content-between mt-3 align-items-center">
                         <span class="text-secondary small" id="outputStats">0 rows</span>
-                        <button id="downloadBtn" class="btn btn-success btn-sm px-4" disabled>
-                            <i class="bi bi-download me-2"></i> Download CSV
-                        </button>
+                        <div class="d-flex gap-2">
+                            <div class="btn-group" role="group">
+                                <button id="copyExcelBtn" class="btn btn-primary btn-sm" disabled
+                                    title="Copy for Excel (Tab Separated)">
+                                    <i class="bi bi-file-earmark-spreadsheet me-2"></i> Copy Excel
+                                </button>
+                                <button id="copyCsvBtn" class="btn btn-outline-light btn-sm" disabled
+                                    title="Copy as raw CSV">
+                                    <i class="bi bi-file-earmark-text me-2"></i> CSV
+                                </button>
+                            </div>
+                            <button id="downloadBtn" class="btn btn-success btn-sm px-4" disabled>
+                                <i class="bi bi-download me-2"></i> Download
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

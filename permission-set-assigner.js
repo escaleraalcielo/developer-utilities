@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const userIdsInput = document.getElementById('userIds');
     const generateBtn = document.getElementById('generateBtn');
     const downloadBtn = document.getElementById('downloadBtn');
+    const copyExcelBtn = document.getElementById('copyExcelBtn');
+    const copyCsvBtn = document.getElementById('copyCsvBtn');
     const outputPreview = document.getElementById('outputPreview');
     const validationMessage = document.getElementById('validationMessage');
     const validationText = document.getElementById('validationText');
@@ -19,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const lblPermSetIds = document.getElementById('lblPermSetIds');
 
     let csvContent = ''; // Store generated CSV blob content
+    let clipboardContent = ''; // Store generated TSV for clipboard
 
     // --- Event Listeners ---
     permSetIdsInput.addEventListener('input', () => {
@@ -47,6 +50,40 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+    });
+
+    copyExcelBtn.addEventListener('click', () => {
+        if (!clipboardContent) return;
+
+        navigator.clipboard.writeText(clipboardContent).then(() => {
+            const originalText = copyExcelBtn.innerHTML;
+            copyExcelBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i> Copied!';
+            copyExcelBtn.classList.remove('btn-primary');
+            copyExcelBtn.classList.add('btn-success');
+
+            setTimeout(() => {
+                copyExcelBtn.innerHTML = originalText;
+                copyExcelBtn.classList.add('btn-primary');
+                copyExcelBtn.classList.remove('btn-success');
+            }, 1500);
+        });
+    });
+
+    copyCsvBtn.addEventListener('click', () => {
+        if (!csvContent) return;
+
+        navigator.clipboard.writeText(csvContent).then(() => {
+            const originalText = copyCsvBtn.innerHTML;
+            copyCsvBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i> Copied!';
+            copyCsvBtn.classList.remove('btn-outline-light');
+            copyCsvBtn.classList.add('btn-success');
+
+            setTimeout(() => {
+                copyCsvBtn.innerHTML = originalText;
+                copyCsvBtn.classList.add('btn-outline-light');
+                copyCsvBtn.classList.remove('btn-success');
+            }, 1500);
+        });
     });
 
     // --- Logic ---
@@ -186,6 +223,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         csvContent = rows.join('\n');
 
+        // Generate Clipboard Content (TSV)
+        // Simple regex replace for this strict format: replace "," with "	" (tab)
+        clipboardContent = rows.map(r => r.replaceAll('","', '"\t"')).join('\n');
+
         // 4. Update Preview
         // Show first few lines
         outputPreview.value = csvContent;
@@ -194,6 +235,8 @@ document.addEventListener('DOMContentLoaded', () => {
         outputStats.textContent = `${totalRows} rows generated`;
         validationMessage.classList.add('d-none');
         downloadBtn.disabled = false;
+        copyExcelBtn.disabled = false;
+        copyCsvBtn.disabled = false;
 
         // Flash success feedback
         const originalText = generateBtn.innerHTML;
@@ -212,8 +255,11 @@ document.addEventListener('DOMContentLoaded', () => {
         validationText.textContent = msg;
         validationMessage.classList.remove('d-none');
         downloadBtn.disabled = true;
+        copyExcelBtn.disabled = true;
+        copyCsvBtn.disabled = true;
         outputPreview.value = '';
         csvContent = '';
+        clipboardContent = '';
     }
 
     // --- Drag and Drop ---
