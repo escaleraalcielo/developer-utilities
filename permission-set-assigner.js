@@ -13,6 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const permStats = document.getElementById('permStats');
     const outputStats = document.getElementById('outputStats');
     const dropZone = document.getElementById('dropZone');
+    const cleanUsersBtn = document.getElementById('cleanUsersBtn');
+    const cleanPermsBtn = document.getElementById('cleanPermsBtn');
 
     // Type Toggles
     const typePermSet = document.getElementById('typePermSet');
@@ -86,7 +88,62 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    cleanUsersBtn.addEventListener('click', () => {
+        cleanInput(userIdsInput, '005');
+        updateStats();
+        validateBase();
+    });
+
+    cleanPermsBtn.addEventListener('click', () => {
+        const isLicense = typeLicense.checked;
+        const prefix = isLicense ? '0PL' : '0PS';
+        cleanInput(permSetIdsInput, prefix);
+        updatePermStats();
+        validateBase();
+    });
+
     // --- Logic ---
+
+    function cleanInput(textarea, prefix) {
+        const text = textarea.value;
+        if (!text) return;
+
+        // Regex to find 15 or 18 char IDs starting with prefix
+        // boundaries \b ensure we don't cut words in half, though for IDs quotes/commas usually surround them.
+        const regex = new RegExp(`\\b(${prefix}[a-zA-Z0-9]{15}|${prefix}[a-zA-Z0-9]{12})\\b`, 'g');
+
+        const matches = text.match(regex);
+
+        if (matches && matches.length > 0) {
+            // Deduplicate
+            const uniqueIds = [...new Set(matches)];
+            textarea.value = uniqueIds.join('\n');
+
+            // Optional: Feedback
+            const btnId = textarea.id === 'userIds' ? 'cleanUsersBtn' : 'cleanPermsBtn';
+            const btn = document.getElementById(btnId);
+            const originalHtml = btn.innerHTML;
+
+            btn.innerHTML = '<i class="bi bi-check"></i> Cleaned!';
+            setTimeout(() => {
+                btn.innerHTML = originalHtml;
+            }, 1000);
+        } else {
+            // Check if there was input but no matches? 
+            // Maybe user pasted wrong thing.
+            if (text.trim().length > 0) {
+                // No valid IDs found
+                const btnId = textarea.id === 'userIds' ? 'cleanUsersBtn' : 'cleanPermsBtn';
+                const btn = document.getElementById(btnId);
+                const originalHtml = btn.innerHTML;
+
+                btn.innerHTML = '<i class="bi bi-x"></i> None found';
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                }, 1000);
+            }
+        }
+    }
 
     function updateUIForType() {
         const isLicense = typeLicense.checked;

@@ -144,12 +144,18 @@ Example:
 0055f0000053QLvAAM
 0055f0000053QLwAAM"></textarea>
 
-                    <div class="d-flex justify-content-between mt-3">
+                    <div class="d-flex justify-content-between mt-3 align-items-center">
                         <span class="text-secondary small" id="inputStats">0 lines</span>
-                        <button class="btn btn-sm btn-outline-light text-secondary border-0"
-                            onclick="document.getElementById('userIds').value=''; updateStats();">
-                            <i class="bi bi-trash"></i> Clear
-                        </button>
+                        <div class="d-flex gap-2">
+                            <button id="cleanUsersBtn" class="btn btn-sm btn-outline-info border-0"
+                                title="Extracts valid User IDs (starting with 005) and removes duplicates.">
+                                <i class="bi bi-stars me-1"></i> Clean
+                            </button>
+                            <button id="clearUsersBtn" class="btn btn-sm btn-outline-light text-secondary border-0"
+                                onclick="document.getElementById('userIds').value=''; updateStats();">
+                                <i class="bi bi-trash me-1"></i> Clear
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -162,11 +168,21 @@ Example:
 0PS5f000003biIsGAI
 0PS5f000003biItGAI" style="resize: none; height: 100%; font-family: 'Consolas', monospace;"></textarea>
 
-                    <div class="d-flex justify-content-between mt-2 align-items-start">
-                        <div class="form-text text-secondary small mt-0 flex-grow-1">Must start with <span
-                                id="prefixHint" class="text-info">0PS</span>. 15 or 18 chars.</div>
-                        <span class="text-secondary small text-nowrap ms-3" id="permStats">0 lines</span>
+                    <div class="d-flex justify-content-between mt-2 align-items-center">
+                        <span class="text-secondary small" id="permStats">0 lines</span>
+                        <div class="d-flex gap-2">
+                            <button id="cleanPermsBtn" class="btn btn-sm btn-outline-info border-0"
+                                title="Extracts valid IDs and removes duplicates.">
+                                <i class="bi bi-stars me-1"></i> Clean
+                            </button>
+                            <button id="clearPermsBtn" class="btn btn-sm btn-outline-light text-secondary border-0"
+                                onclick="document.getElementById('permSetIds').value=''; updatePermStats();">
+                                <i class="bi bi-trash me-1"></i> Clear
+                            </button>
+                        </div>
                     </div>
+                    <div class="form-text text-secondary small mt-1">Must start with <span id="prefixHint"
+                            class="text-info">0PS</span>. 15 or 18 chars.</div>
                 </div>
             </div>
 
