@@ -11,51 +11,26 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <style>
-        body,
-        html {
-            height: 100%;
-            overflow: hidden;
-            /* Prevent body scroll, handle in tool container if needed */
-        }
-
-        .tool-container {
-            height: 100vh;
-            padding-bottom: 2rem;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .glass-panel {
-            display: flex;
-            flex-direction: column;
-        }
-
-        textarea.glass-input {
-            background-color: rgba(15, 23, 42, 0.4);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            resize: none;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 0.9rem;
-            flex-grow: 1;
-            /* Ensure textarea fills the flex container */
-        }
-
-        textarea.glass-input:focus {
-            background-color: rgba(15, 23, 42, 0.6);
-            border-color: var(--accent-color);
-            color: var(--text-primary);
-            box-shadow: 0 0 0 0.25rem rgba(56, 189, 248, 0.15);
-        }
-
         .options-panel {
             background: rgba(30, 41, 59, 0.3);
             border-bottom: 1px solid var(--border-color);
         }
+
+        /* Mobile overrides/specifics for this tool */
+        @media (max-width: 991.98px) {
+            .glass-panel {
+                margin-bottom: 1rem;
+            }
+
+            #inputData,
+            #outputData {
+                min-height: 200px;
+            }
+        }
     </style>
 </head>
 
-<body>
+<body class="app-mode">
     <!-- Global Navigation -->
     <div class="global-nav dropdown">
         <button class="btn global-nav-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -88,9 +63,9 @@
             </div>
         </div>
 
-        <div class="row g-4 h-100">
+        <div class="row g-4 flex-grow-1">
             <!-- Left Column: Input -->
-            <div class="col-lg-5 d-flex flex-column h-100">
+            <div class="col-lg-5 d-flex flex-column desktop-h-100">
                 <div class="glass-panel p-4 flex-grow-1 d-flex flex-column">
                     <label for="inputData" class="form-label text-secondary small fw-bold text-uppercase mb-3">Input
                         Column</label>
@@ -189,7 +164,7 @@
             </div>
 
             <!-- Right Column: Output -->
-            <div class="col-lg-5 d-flex flex-column h-100">
+            <div class="col-lg-5 d-flex flex-column desktop-h-100">
                 <div class="glass-panel p-4 flex-grow-1 d-flex flex-column">
                     <label for="outputData" class="form-label text-secondary small fw-bold text-uppercase mb-3">Result
                         List</label>

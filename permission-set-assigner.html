@@ -11,89 +11,23 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <style>
-        body,
-        html {
-            height: auto;
-            min-height: 100%;
-            /* overflow hidden only on desktop, see media query */
-        }
-
-        .tool-container {
-            min-height: 100vh;
-            padding-bottom: 2rem;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .glass-panel {
-            display: flex;
-            flex-direction: column;
-        }
-
-        textarea.glass-input {
-            background-color: rgba(15, 23, 42, 0.4);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            resize: none;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 0.9rem;
-            flex-grow: 1;
-        }
-
-        textarea.glass-input:focus {
-            background-color: rgba(15, 23, 42, 0.6);
-            border-color: var(--accent-color);
-            color: var(--text-primary);
-            box-shadow: 0 0 0 0.25rem rgba(56, 189, 248, 0.15);
-        }
-
-        /* Drag and Drop Styling */
-        .drag-area {
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .drag-area.drag-active {
-            border-color: var(--accent-color);
-            background-color: rgba(56, 189, 248, 0.1);
-        }
-
-        .drag-area.drag-active::after {
-            content: 'Drop file here';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: var(--accent-color);
-            font-weight: 600;
-            pointer-events: none;
-            background: rgba(15, 23, 42, 0.9);
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            border: 1px solid var(--accent-color);
-        }
-
-        /* Responsive Desktop Layout */
-        @media (min-width: 992px) {
-
-            body,
-            html {
-                height: 100%;
-                overflow: hidden;
-            }
-
-            .tool-container {
-                height: 100vh;
-                min-height: auto;
-            }
-
-            .desktop-h-100 {
-                height: 100% !important;
-            }
-
-            /* Specific fix for the 35% height panel */
+        /* Mobile adjustments */
+        @media (max-width: 991.98px) {
             .perm-set-panel {
-                height: 35% !important;
+                height: 300px;
+                /* specific height for mobile usability */
+            }
+
+            .glass-panel {
+                margin-bottom: 1rem;
+            }
+
+            #userIds {
+                min-height: 200px;
+            }
+
+            #outputPreview {
+                min-height: 200px;
             }
         }
 
@@ -119,7 +53,7 @@
     </style>
 </head>
 
-<body>
+<body class="app-mode">
     <!-- Global Navigation -->
     <div class="global-nav dropdown">
         <button class="btn global-nav-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">

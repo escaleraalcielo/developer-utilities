@@ -11,17 +11,16 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <style>
-        body,
-        html {
-            height: 100%;
-            overflow: hidden;
-        }
+        /* Mobile overrides */
+        @media (max-width: 991.98px) {
+            .glass-panel {
+                margin-bottom: 1rem;
+            }
 
-        .tool-container {
-            height: 100vh;
-            padding-bottom: 2rem;
-            display: flex;
-            flex-direction: column;
+            #inputData,
+            #outputData {
+                min-height: 200px;
+            }
         }
 
         .glass-panel {
@@ -48,7 +47,7 @@
     </style>
 </head>
 
-<body>
+<body class="app-mode">
     <!-- Global Navigation -->
     <div class="global-nav dropdown">
         <button class="btn global-nav-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -81,9 +80,9 @@
             </div>
         </div>
 
-        <div class="row g-4 h-100">
+        <div class="row g-4 desktop-h-100">
             <!-- Left Column: Input -->
-            <div class="col-lg-5 d-flex flex-column h-100">
+            <div class="col-lg-5 d-flex flex-column desktop-h-100">
                 <div class="glass-panel p-4 flex-grow-1 d-flex flex-column">
                     <label for="inputData" class="form-label text-secondary small fw-bold text-uppercase mb-3">Input IDs
                         (15 characters)</label>
@@ -119,7 +118,7 @@
             </div>
 
             <!-- Right Column: Output -->
-            <div class="col-lg-5 d-flex flex-column h-100">
+            <div class="col-lg-5 d-flex flex-column desktop-h-100">
                 <div class="glass-panel p-4 flex-grow-1 d-flex flex-column">
                     <label for="outputData" class="form-label text-secondary small fw-bold text-uppercase mb-3">Result
                         (18 characters)</label>
