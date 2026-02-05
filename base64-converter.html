@@ -73,13 +73,14 @@
                     <!-- Mode Toggles (Tabs) -->
                     <ul class="nav nav-pills mb-4" id="modeTab" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="file-tab" data-bs-toggle="pill"
-                                data-bs-target="#file-mode" type="button" role="tab" aria-selected="true"><i
+                            <button class="nav-link" id="file-tab" data-bs-toggle="pill" data-bs-target="#file-mode"
+                                type="button" role="tab" aria-selected="false"><i
                                     class="bi bi-file-earmark me-2"></i>File to Base64</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="text-tab" data-bs-toggle="pill" data-bs-target="#text-mode"
-                                type="button" role="tab" aria-selected="false"><i class="bi bi-textarea-t me-2"></i>Text
+                            <button class="nav-link active" id="text-tab" data-bs-toggle="pill"
+                                data-bs-target="#text-mode" type="button" role="tab" aria-selected="true"><i
+                                    class="bi bi-textarea-t me-2"></i>Text
                                 String</button>
                         </li>
                     </ul>
@@ -87,8 +88,7 @@
                     <div class="tab-content flex-grow-1 d-flex flex-column" id="modeTabContent">
 
                         <!-- File Mode -->
-                        <div class="tab-pane fade show active flex-grow-1 d-flex flex-column" id="file-mode"
-                            role="tabpanel">
+                        <div class="tab-pane fade flex-grow-1 d-flex flex-column" id="file-mode" role="tabpanel">
                             <label class="form-label text-secondary small fw-bold text-uppercase mb-3">Input
                                 File</label>
 
@@ -108,7 +108,8 @@
                         </div>
 
                         <!-- Text Mode -->
-                        <div class="tab-pane fade flex-grow-1 d-flex flex-column" id="text-mode" role="tabpanel">
+                        <div class="tab-pane fade show active flex-grow-1 d-flex flex-column" id="text-mode"
+                            role="tabpanel">
                             <label class="form-label text-secondary small fw-bold text-uppercase mb-2">Input
                                 Text</label>
 
