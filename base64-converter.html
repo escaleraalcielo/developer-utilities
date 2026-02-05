@@ -113,21 +113,24 @@
                                 Text</label>
 
                             <!-- Encode/Decode Toggle -->
-                            <div class="d-flex gap-3 mb-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="textMode" id="modeEncode"
-                                        value="encode" checked>
-                                    <label class="form-check-label text-white small" for="modeEncode">
-                                        Encode (Text &rarr; Base64)
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="textMode" id="modeDecode"
-                                        value="decode">
-                                    <label class="form-check-label text-white small" for="modeDecode">
-                                        Decode (Base64 &rarr; Text)
-                                    </label>
-                                </div>
+                            <!-- Encode/Decode Toggle (Segmented Control) -->
+                            <div class="btn-group w-100 mb-3" role="group" aria-label="Text Conversion Mode">
+                                <input type="radio" class="btn-check" name="textMode" id="modeEncode" value="encode"
+                                    checked>
+                                <label class="btn btn-outline-light" for="modeEncode">
+                                    <i class="bi bi-lock-fill mb-1 d-block d-sm-none fs-5"></i>
+                                    <span class="d-none d-sm-inline"><i class="bi bi-lock-fill me-2"></i>Encode (Text
+                                        &rarr; Base64)</span>
+                                    <span class="d-inline d-sm-none">Encode</span>
+                                </label>
+
+                                <input type="radio" class="btn-check" name="textMode" id="modeDecode" value="decode">
+                                <label class="btn btn-outline-light" for="modeDecode">
+                                    <i class="bi bi-unlock-fill mb-1 d-block d-sm-none fs-5"></i>
+                                    <span class="d-none d-sm-inline"><i class="bi bi-unlock-fill me-2"></i>Decode
+                                        (Base64 &rarr; Text)</span>
+                                    <span class="d-inline d-sm-none">Decode</span>
+                                </label>
                             </div>
 
                             <textarea id="inputText" class="form-control glass-input flex-grow-1 p-3"
@@ -184,7 +187,8 @@
                         class="p-3 border-bottom border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
                         <h6 class="text-secondary small fw-bold text-uppercase mb-0">History <span
                                 class="text-secondary opacity-50 small ms-1">(Last 10 items, oldest removed)</span>
-                            <span class="badge bg-secondary bg-opacity-25 ms-2" id="historyCount">0/10</span></h6>
+                            <span class="badge bg-secondary bg-opacity-25 ms-2" id="historyCount">0/10</span>
+                        </h6>
                         <button class="btn btn-xs btn-link text-secondary text-decoration-none dropdown-toggle small"
                             type="button" data-bs-toggle="collapse" data-bs-target="#historyTableContainer">
                             Toggle

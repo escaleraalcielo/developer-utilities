@@ -224,3 +224,10 @@ h6 {
     background: var(--accent-color);
     color: white;
 }
+
+/* Custom Segmented Control Active State */
+.btn-check:checked+.btn-outline-light {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: white;
+}
