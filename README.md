@@ -21,7 +21,17 @@ Bulk-generate CSV files for Salesforce Permission Set or License assignments.
 * **Cross-Join Logic**: Assign multiple Permission Sets to multiple Users in one click.
 * **Clean Mode**: Automatically extracts valid Salesforce IDs from messy text.
 
-### 4. GUID Generator
+### 4. Base64 Converter
+*   **File to Base64**: Drag and drop any file to convert it to a Base64 string.
+*   **Text Mode**:
+    *   **Encode**: Convert text to Base64 (with Lock icon).
+    *   **Decode**: Convert Base64 strings back to text (with Unlock icon).
+    *   **Validation**: Strict 5000-character input limit with visual alerts for performance safety.
+*   **History**: Tracks the last 10 conversions locally for quick reference.
+*   **Mobile Friendly**: Full-width segmented controls and responsive design.
+*   **Safety**: All processing is client-side. The tool is sandboxed in the browser and does not execute decoded scripts.
+
+### 5. GUID Generator
 Generate random Version 4 UUIDs with bulk generation (up to 20) and session history.
 
 ## Usage
@@ -29,8 +39,15 @@ Run the tools directly from your file system—no web server required.
 1. Download or clone the repository.
 2. Open `index.html` in any modern web browser.
 
-## Privacy
-**Privacy is a feature.** These tools use client-side JavaScript for all operations. 
-* No Analytics. 
-* No Cookies. 
-* No Server-side logging.
+## 🔒 Security & Privacy
+*   **Local Processing**: All tools operate 100% client-side. No data is ever sent to a server.
+*   **Safe Execution**: Decoded outputs are displayed as plain text and are not executed by the browser.
+*   **Performance**: Input limits prevent the browser from freezing due to excessive data.
+*   **No Analytics**: No tracking of usage.
+*   **No Cookies**: No data stored in cookies.
+*   **No Server-side logging**: No server-side logs are generated as there is no server.
+
+## 🤝 Contributing
+1.  Clone the repository (or copy the files).
+2.  Open `index.html` in your browser.
+3.  Feel free to customize the `style.css` variables to match your brand.
