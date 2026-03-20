@@ -75,9 +75,15 @@
             <!-- Left Column: Input -->
             <div class="col-lg-5 d-flex flex-column desktop-h-100">
                 <div class="glass-panel p-4 flex-grow-1 d-flex flex-column">
-                    <label for="inputData" class="form-label text-secondary small fw-bold text-uppercase mb-3">Raw Debug Log</label>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <label for="inputData" class="form-label text-secondary small fw-bold text-uppercase mb-0">Raw Debug Log</label>
+                        <input type="file" id="logFileInput" accept=".log,.txt,text/plain" style="display: none;">
+                        <button id="uploadBtn" class="btn btn-sm btn-outline-light text-secondary border-0">
+                            <i class="bi bi-upload"></i> Upload
+                        </button>
+                    </div>
                     <textarea id="inputData" class="form-control glass-input flex-grow-1 p-3"
-                        placeholder="Paste raw Salesforce debug log here..."></textarea>
+                        placeholder="Paste raw Salesforce debug log here or upload a file..."></textarea>
 
                     <div class="d-flex justify-content-between mt-3">
                         <span class="text-secondary small" id="inputStats">0 lines</span>
@@ -136,9 +142,14 @@
 
                     <div class="d-flex justify-content-between mt-3 align-items-center">
                         <span class="text-secondary small" id="outputStats">0 lines shown</span>
-                        <button id="copyBtn" class="btn btn-primary btn-sm px-4">
-                            <i class="bi bi-clipboard"></i> Copy
-                        </button>
+                        <div>
+                            <button id="saveBtn" class="btn btn-success btn-sm px-4 me-2">
+                                <i class="bi bi-download"></i> Save
+                            </button>
+                            <button id="copyBtn" class="btn btn-primary btn-sm px-4">
+                                <i class="bi bi-clipboard"></i> Copy
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

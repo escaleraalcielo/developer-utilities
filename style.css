@@ -38,8 +38,8 @@ body {
 /* Responsive Desktop Layout */
 @media (min-width: 992px) {
 
-    body,
-    html {
+    html:has(body.app-mode),
+    body.app-mode {
         height: 100%;
         overflow: hidden;
     }
