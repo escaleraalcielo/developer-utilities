@@ -364,7 +364,6 @@ document.addEventListener('DOMContentLoaded', () => {
             showCopyFeedback();
         } catch (err) {
             console.error('Fallback copy failed', err);
-            // alert('Could not copy automatically. Please press Ctrl+C.');
         }
     }
 
