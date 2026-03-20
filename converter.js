@@ -97,17 +97,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Store items for validation before quoting
-        const itemsForValidation = [...processedItems];
+        // Optimization: since we no longer modify processedItems directly, we don't need to clone the array
+        const itemsForValidation = processedItems;
 
-        // Apply Quotes
-        if (quoteType === 'single') {
-            processedItems = processedItems.map(item => `'${item}'`);
-        } else if (quoteType === 'double') {
-            processedItems = processedItems.map(item => `"${item}"`);
+        // 3. Join & Apply Quotes
+        let result = '';
+        if (processedItems.length > 0) {
+            if (quoteType === 'single') {
+                result = `'${processedItems.join(`'${delim}'`)}'`;
+            } else if (quoteType === 'double') {
+                result = `"${processedItems.join(`"${delim}"`)}"`;
+            } else {
+                result = processedItems.join(delim);
+            }
         }
-
-        // 3. Join
-        let result = processedItems.join(delim);
 
         // 4. Enclose Result
         if (processedItems.length > 0) { // Only enclose if there is content
