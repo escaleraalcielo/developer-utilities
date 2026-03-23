@@ -411,13 +411,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Helper to escape HTML for preview
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
     // Expose actions globally for inline onclick handlers
     window.copyFromHistory = (id) => {
         const item = sessionHistory.find(i => i.id === id);

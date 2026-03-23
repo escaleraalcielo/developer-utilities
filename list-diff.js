@@ -204,16 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return id + suffix;
     }
 
-    function escapeHtml(text) {
-        if (!text) return '';
-        return text
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    }
-
     // --- Clipboard ---
 
     window.copyResult = (type) => {
