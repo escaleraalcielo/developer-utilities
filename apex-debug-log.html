@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salesforce ID Converter | Dev Utils</title>
+    <title>Apex Debug Log Filter | Dev Utils</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -34,8 +34,11 @@
             color: var(--text-primary);
             resize: none;
             font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             flex-grow: 1;
+            white-space: pre;
+            overflow-wrap: normal;
+            overflow-x: auto;
         }
 
         textarea.glass-input:focus {
@@ -48,7 +51,6 @@
 </head>
 
 <body class="app-mode">
-    <!-- Global Navigation -->
     <!-- Global Navigation -->
     <div class="global-nav">
         <a href="index.html" class="btn global-nav-btn" title="Return to Home">
@@ -65,7 +67,7 @@
                 </a>
             </div>
             <div class="col">
-                <h1 class="h4 mb-0 fw-bold">Salesforce ID Converter (15 to 18)</h1>
+                <h1 class="h4 mb-0 fw-bold">Apex Debug Log Filter</h1>
             </div>
         </div>
 
@@ -73,15 +75,20 @@
             <!-- Left Column: Input -->
             <div class="col-lg-5 d-flex flex-column desktop-h-100">
                 <div class="glass-panel p-4 flex-grow-1 d-flex flex-column">
-                    <label for="inputData" class="form-label text-secondary small fw-bold text-uppercase mb-3">Input IDs
-                        (15 characters)</label>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <label for="inputData" class="form-label text-secondary small fw-bold text-uppercase mb-0">Raw Debug Log</label>
+                        <input type="file" id="logFileInput" accept=".log,.txt,text/plain" style="display: none;">
+                        <button id="uploadBtn" class="btn btn-sm btn-outline-light text-secondary border-0">
+                            <i class="bi bi-upload"></i> Upload
+                        </button>
+                    </div>
                     <textarea id="inputData" class="form-control glass-input flex-grow-1 p-3"
-                        placeholder="Paste Salesforce IDs here...&#10;0015500000Wv25U"></textarea>
+                        placeholder="Paste raw Salesforce debug log here or upload a file..."></textarea>
 
                     <div class="d-flex justify-content-between mt-3">
                         <span class="text-secondary small" id="inputStats">0 lines</span>
                         <button class="btn btn-sm btn-outline-light text-secondary border-0"
-                            onclick="document.getElementById('inputData').value=''; updateConversion();">
+                            onclick="document.getElementById('inputData').value=''; window.updateFilter();">
                             <i class="bi bi-trash"></i> Clear
                         </button>
                     </div>
@@ -91,16 +98,37 @@
             <!-- Middle Column: Controls -->
             <div class="col-lg-2">
                 <div class="glass-panel p-3 h-100">
-                    <h6 class="text-secondary small fw-bold text-uppercase mb-3">Configuration</h6>
+                    <h6 class="text-secondary small fw-bold text-uppercase mb-3">Filter Options</h6>
 
                     <div class="mb-3">
-                        <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" id="optionSoql">
-                            <label class="form-check-label small text-secondary" for="optionSoql">Convert to SOQL
-                                List</label>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input filter-checkbox" type="checkbox" id="filterUserDebug" value="USER_DEBUG" checked>
+                            <label class="form-check-label small text-secondary" for="filterUserDebug">USER_DEBUG</label>
                         </div>
-                        <div class="form-text text-secondary small fst-italic ms-1" style="font-size: 0.75rem;">
-                            Formats as 'ID1', 'ID2' for queries.
+                        <div class="form-check mb-2">
+                            <input class="form-check-input filter-checkbox" type="checkbox" id="filterException" value="EXCEPTION_THROWN" checked>
+                            <label class="form-check-label small text-secondary" for="filterException">EXCEPTION_THROWN</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input filter-checkbox" type="checkbox" id="filterFatalError" value="FATAL_ERROR" checked>
+                            <label class="form-check-label small text-secondary" for="filterFatalError">FATAL_ERROR</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input filter-checkbox" type="checkbox" id="filterMethodEntry" value="METHOD_ENTRY">
+                            <label class="form-check-label small text-secondary" for="filterMethodEntry">METHOD_ENTRY</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input filter-checkbox" type="checkbox" id="filterMethodExit" value="METHOD_EXIT">
+                            <label class="form-check-label small text-secondary" for="filterMethodExit">METHOD_EXIT</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input filter-checkbox" type="checkbox" id="filterSoql" value="SOQL_EXECUTE_BEGIN">
+                            <label class="form-check-label small text-secondary" for="filterSoql">SOQL_EXECUTE_BEGIN</label>
+                        </div>
+                        <hr class="border-secondary opacity-25 my-3">
+                        <div class="form-group mb-2">
+                            <label for="customFilter" class="form-label small text-secondary mb-1">Custom Filter (Contains)</label>
+                            <input type="text" id="customFilter" class="form-control form-control-sm bg-dark text-light border-secondary" placeholder="e.g. Account">
                         </div>
                     </div>
                 </div>
@@ -109,21 +137,19 @@
             <!-- Right Column: Output -->
             <div class="col-lg-5 d-flex flex-column desktop-h-100">
                 <div class="glass-panel p-4 flex-grow-1 d-flex flex-column">
-                    <label for="outputData" class="form-label text-secondary small fw-bold text-uppercase mb-3">Result
-                        (18 characters)</label>
+                    <label for="outputData" class="form-label text-secondary small fw-bold text-uppercase mb-3">Filtered Log</label>
                     <textarea id="outputData" class="form-control glass-input flex-grow-1 p-3" readonly></textarea>
 
-                    <!-- Validation Warning -->
-                    <div id="validationMessage" class="alert alert-warning d-none mt-2 mb-0 py-2 small" role="alert">
-                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                        <span id="validationText"></span>
-                    </div>
-
                     <div class="d-flex justify-content-between mt-3 align-items-center">
-                        <span class="text-secondary small" id="outputStats">0 items</span>
-                        <button id="copyBtn" class="btn btn-primary btn-sm px-4">
-                            <i class="bi bi-clipboard"></i> Copy
-                        </button>
+                        <span class="text-secondary small" id="outputStats">0 lines shown</span>
+                        <div>
+                            <button id="saveBtn" class="btn btn-success btn-sm px-4 me-2">
+                                <i class="bi bi-download"></i> Save
+                            </button>
+                            <button id="copyBtn" class="btn btn-primary btn-sm px-4">
+                                <i class="bi bi-clipboard"></i> Copy
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -145,8 +171,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="sf-id-utils.js"></script>
-    <script src="id-converter.js"></script>
+    <script src="apex-debug-log.js"></script>
 </body>
 
 </html>

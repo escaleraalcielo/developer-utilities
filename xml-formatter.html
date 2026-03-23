@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salesforce ID Converter | Dev Utils</title>
+    <title>XML Formatter | Dev Utils</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -34,8 +34,11 @@
             color: var(--text-primary);
             resize: none;
             font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             flex-grow: 1;
+            white-space: pre;
+            overflow-wrap: normal;
+            overflow-x: auto;
         }
 
         textarea.glass-input:focus {
@@ -48,7 +51,6 @@
 </head>
 
 <body class="app-mode">
-    <!-- Global Navigation -->
     <!-- Global Navigation -->
     <div class="global-nav">
         <a href="index.html" class="btn global-nav-btn" title="Return to Home">
@@ -65,7 +67,7 @@
                 </a>
             </div>
             <div class="col">
-                <h1 class="h4 mb-0 fw-bold">Salesforce ID Converter (15 to 18)</h1>
+                <h1 class="h4 mb-0 fw-bold">XML / package.xml Formatter</h1>
             </div>
         </div>
 
@@ -73,15 +75,14 @@
             <!-- Left Column: Input -->
             <div class="col-lg-5 d-flex flex-column desktop-h-100">
                 <div class="glass-panel p-4 flex-grow-1 d-flex flex-column">
-                    <label for="inputData" class="form-label text-secondary small fw-bold text-uppercase mb-3">Input IDs
-                        (15 characters)</label>
+                    <label for="inputData" class="form-label text-secondary small fw-bold text-uppercase mb-3">Raw XML</label>
                     <textarea id="inputData" class="form-control glass-input flex-grow-1 p-3"
-                        placeholder="Paste Salesforce IDs here...&#10;0015500000Wv25U"></textarea>
+                        placeholder="Paste raw XML here...&#10;<?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?>..."></textarea>
 
                     <div class="d-flex justify-content-between mt-3">
-                        <span class="text-secondary small" id="inputStats">0 lines</span>
+                        <span class="text-secondary small" id="inputStats">0 characters</span>
                         <button class="btn btn-sm btn-outline-light text-secondary border-0"
-                            onclick="document.getElementById('inputData').value=''; updateConversion();">
+                            onclick="document.getElementById('inputData').value=''; window.updateFormat();">
                             <i class="bi bi-trash"></i> Clear
                         </button>
                     </div>
@@ -91,16 +92,27 @@
             <!-- Middle Column: Controls -->
             <div class="col-lg-2">
                 <div class="glass-panel p-3 h-100">
-                    <h6 class="text-secondary small fw-bold text-uppercase mb-3">Configuration</h6>
+                    <h6 class="text-secondary small fw-bold text-uppercase mb-3">Format Options</h6>
 
                     <div class="mb-3">
-                        <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" id="optionSoql">
-                            <label class="form-check-label small text-secondary" for="optionSoql">Convert to SOQL
-                                List</label>
+                        <div class="d-grid gap-2">
+                            <button id="btnFormat" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-text-indent-left"></i> Pretty Print
+                            </button>
+                            <button id="btnMinify" class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-arrows-collapse"></i> Minify
+                            </button>
                         </div>
-                        <div class="form-text text-secondary small fst-italic ms-1" style="font-size: 0.75rem;">
-                            Formats as 'ID1', 'ID2' for queries.
+
+                        <hr class="border-secondary opacity-25 my-3">
+
+                        <div class="form-group mb-2">
+                            <label for="indentSize" class="form-label small text-secondary mb-1">Indentation</label>
+                            <select id="indentSize" class="form-select form-select-sm bg-dark text-light border-secondary">
+                                <option value="2">2 Spaces</option>
+                                <option value="4" selected>4 Spaces</option>
+                                <option value="tab">Tab</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -109,18 +121,17 @@
             <!-- Right Column: Output -->
             <div class="col-lg-5 d-flex flex-column desktop-h-100">
                 <div class="glass-panel p-4 flex-grow-1 d-flex flex-column">
-                    <label for="outputData" class="form-label text-secondary small fw-bold text-uppercase mb-3">Result
-                        (18 characters)</label>
+                    <label for="outputData" class="form-label text-secondary small fw-bold text-uppercase mb-3">Formatted XML</label>
                     <textarea id="outputData" class="form-control glass-input flex-grow-1 p-3" readonly></textarea>
 
                     <!-- Validation Warning -->
-                    <div id="validationMessage" class="alert alert-warning d-none mt-2 mb-0 py-2 small" role="alert">
+                    <div id="validationMessage" class="alert alert-danger d-none mt-2 mb-0 py-2 small" role="alert">
                         <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                        <span id="validationText"></span>
+                        <span id="validationText">Invalid XML</span>
                     </div>
 
                     <div class="d-flex justify-content-between mt-3 align-items-center">
-                        <span class="text-secondary small" id="outputStats">0 items</span>
+                        <span class="text-secondary small" id="outputStats">0 characters</span>
                         <button id="copyBtn" class="btn btn-primary btn-sm px-4">
                             <i class="bi bi-clipboard"></i> Copy
                         </button>
@@ -145,8 +156,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="sf-id-utils.js"></script>
-    <script src="id-converter.js"></script>
+    <script src="xml-formatter.js"></script>
 </body>
 
 </html>

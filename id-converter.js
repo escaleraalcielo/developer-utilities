@@ -15,43 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Core Logic ---
 
-    // Lookup table for the 5-bit checksum character
-    const CHECKSUM_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ012345";
-
-    function convert15to18(id15) {
-        if (!id15) return "";
-        id15 = id15.trim();
-
-        // Return as-is if already 18 (or not 15) - validation handles the "not 15" warning
-        if (id15.length === 18) return id15;
-        if (id15.length !== 15) return id15; // Pass through invalid length for now, flagged elsewhere
-
-        let suffix = "";
-
-        // Process in 3 chunks of 5
-        for (let i = 0; i < 3; i++) {
-            let flags = 0;
-
-            // Loop through the 5 chars in this chunk
-            for (let j = 0; j < 5; j++) {
-                const char = id15.charAt(i * 5 + j);
-
-                // If uppercase, set the bit
-                // Logic: bit 0 corresponds to the character at position 5 (or 0 in specific reversal logic)
-                // Standard Algo:
-                // For chunk 0 (chars 0-4): Char 0 -> bit 0, Char 1 -> bit 1...
-                // Only A-Z are checked.
-                if (char >= 'A' && char <= 'Z') {
-                    flags += (1 << j);
-                }
-            }
-
-            suffix += CHECKSUM_CHARS.charAt(flags);
-        }
-
-        return id15 + suffix;
-    }
-
     function updateConversion() {
         const rawInput = inputEl.value;
         const lines = rawInput.split(/\r?\n/);
@@ -68,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Validate
             if (trimmed.length === 15 || trimmed.length === 18) {
-                const converted = convert15to18(trimmed);
+                const converted = to18CharId(trimmed);
                 processedIds.push(converted);
                 validIds++;
             } else {
