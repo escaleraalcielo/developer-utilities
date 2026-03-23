@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterCheckboxes = document.querySelectorAll('.filter-checkbox');
     const customFilterEl = document.getElementById('customFilter');
 
+    let originalFileName = '';
+
     // Event Listeners
     inputEl.addEventListener('input', updateFilter);
     customFilterEl.addEventListener('input', updateFilter);
@@ -38,6 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Please upload a valid .log or .txt file.');
             return;
         }
+
+        originalFileName = file.name;
 
         // Limit file size (e.g., 50MB) to prevent browser crashing
         const MAX_SIZE_MB = 50;
@@ -69,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!rawInput.trim()) {
             outputEl.value = '';
             outputStatsEl.textContent = '0 lines shown';
+            originalFileName = '';
             return;
         }
 
@@ -132,7 +137,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'filtered_debug_log.log';
+
+            let downloadName = 'filtered_debug_log.log';
+            if (originalFileName) {
+                const lastDotIndex = originalFileName.lastIndexOf('.');
+                if (lastDotIndex !== -1 && lastDotIndex !== 0) {
+                    const namePart = originalFileName.substring(0, lastDotIndex);
+                    const extPart = originalFileName.substring(lastDotIndex);
+                    downloadName = `${namePart}_filtered${extPart}`;
+                } else {
+                    downloadName = `${originalFileName}_filtered.log`;
+                }
+            }
+            a.download = downloadName;
+
             document.body.appendChild(a);
             a.click();
 
