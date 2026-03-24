@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // History
     const historyTableBody = document.getElementById('historyTableBody');
     const historyCountEl = document.getElementById('historyCount');
+    const loadSampleBtn = document.getElementById('loadSampleBtn');
     let sessionHistory = [];
     const HISTORY_LIMIT = 10;
 
@@ -35,6 +36,25 @@ document.addEventListener('DOMContentLoaded', () => {
     let textConversionMode = 'encode'; // 'encode' or 'decode'
 
     // --- Event Listeners ---
+
+    // --- Load Sample Logic ---
+    if (loadSampleBtn) {
+        loadSampleBtn.addEventListener('click', () => {
+            if (inputText.value.trim() !== '') {
+                const proceed = window.confirm("This will overwrite your current input. Do you want to continue?");
+                if (!proceed) return;
+            }
+
+            // Ensure text mode is active
+            const textTab = new bootstrap.Tab(document.getElementById('text-tab'));
+            textTab.show();
+
+            inputText.value = window.SampleData.base64Converter;
+            modeEncodeRx.checked = true;
+            textConversionMode = 'encode';
+            processText();
+        });
+    }
 
     // Tab Switching
     fileTabBtn.addEventListener('shown.bs.tab', () => {

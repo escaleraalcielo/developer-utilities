@@ -3,8 +3,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputA = document.getElementById('inputA');
     const inputB = document.getElementById('inputB');
     const optSmartSF = document.getElementById('optSmartSF');
+    const loadSampleBtn = document.getElementById('loadSampleBtn');
     const optCaseSensitive = document.getElementById('optCaseSensitive');
     const optRemoveDupes = document.getElementById('optRemoveDupes');
+    const optTrim = document.getElementById('optTrim');
+    const optRemoveEmpty = document.getElementById('optRemoveEmpty');
     const clearAllBtn = document.getElementById('clearAllBtn');
 
     // Stats
@@ -27,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Events
-    const inputs = [inputA, inputB, optSmartSF, optCaseSensitive, optRemoveDupes, document.getElementById('optSort')];
+    const inputs = [inputA, inputB, optSmartSF, optCaseSensitive, optRemoveDupes, optTrim, optRemoveEmpty, document.getElementById('optSort')];
     inputs.forEach(el => el.addEventListener('input', updateDiff));
 
     clearAllBtn.addEventListener('click', () => {
@@ -35,6 +38,24 @@ document.addEventListener('DOMContentLoaded', () => {
         inputB.value = '';
         updateDiff();
     });
+
+    // --- Load Sample Logic ---
+    if (loadSampleBtn) {
+        loadSampleBtn.addEventListener('click', () => {
+            if (inputA.value.trim() !== '' || inputB.value.trim() !== '') {
+                const proceed = window.confirm("This will overwrite your current input. Do you want to continue?");
+                if (!proceed) return;
+            }
+
+            // Sample data demonstrating 15 vs 18 char SF IDs, common elements, and unique elements
+            inputA.value = window.SampleData.listDiff.listA;
+            inputB.value = window.SampleData.listDiff.listB;
+
+            optSmartSF.checked = true;
+            optRemoveDupes.checked = true;
+            updateDiff();
+        });
+    }
 
     // Initial Run
     updateDiff();
@@ -44,11 +65,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const isSmartSF = optSmartSF.checked;
         const isCaseSensitive = optCaseSensitive.checked;
         const shouldRemoveDupes = optRemoveDupes.checked;
+        const shouldTrim = optTrim.checked;
+        const shouldRemoveEmpty = optRemoveEmpty.checked;
         const sortMode = document.getElementById('optSort').value;
 
         // 2. Process Inputs
-        const listA = parseInput(inputA.value);
-        const listB = parseInput(inputB.value);
+        const listA = parseInput(inputA.value, shouldTrim, shouldRemoveEmpty);
+        const listB = parseInput(inputB.value, shouldTrim, shouldRemoveEmpty);
 
         countA.innerText = listA.length;
         countB.innerText = listB.length;
@@ -89,10 +112,20 @@ document.addEventListener('DOMContentLoaded', () => {
         renderList(resCommon, resultSets.common, countCommon);
     }
 
-    function parseInput(text) {
+    function parseInput(text, shouldTrim, shouldRemoveEmpty) {
         if (!text) return [];
         // Split by newline
-        return text.split(/\r?\n/);
+        let lines = text.split(/\r?\n/);
+
+        if (shouldTrim) {
+            lines = lines.map(line => line.trim());
+        }
+
+        if (shouldRemoveEmpty) {
+            lines = lines.filter(line => line !== '');
+        }
+
+        return lines;
     }
 
     function buildMap(list, isSmartSF, isCaseSensitive) {

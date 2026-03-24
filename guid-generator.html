@@ -50,7 +50,7 @@
     <!-- Global Navigation -->
     <!-- Global Navigation -->
     <div class="global-nav">
-        <a href="index.html" class="btn global-nav-btn" title="Return to Home">
+        <a href="index.html" class="btn global-nav-btn" title="Return to Home" aria-label="Return to Home">
             <i class="bi bi-house-door fs-4"></i>
         </a>
     </div>
@@ -59,7 +59,7 @@
         <!-- Header / Nav -->
         <div class="row mb-4 align-items-center">
             <div class="col-auto">
-                <a href="index.html" class="btn btn-outline-light btn-sm rounded-circle p-2">
+                <a href="index.html" class="btn btn-outline-light btn-sm rounded-circle p-2" aria-label="Return to Home">
                     <i class="bi bi-arrow-left"></i>
                 </a>
             </div>
@@ -76,9 +76,10 @@
 
                     <div class="mb-4">
                         <label for="guidCount" class="form-label text-white small">Number of GUIDs</label>
-                        <input type="number" id="guidCount" class="form-control glass-input" value="1" min="1" max="20"
+                        <input type="number" id="guidCount" class="form-control glass-input mb-3" value="1" min="1" max="20"
                             style="flex-grow: 0;">
-                        <div class="form-text text-secondary small">Max 20 at a time</div>
+                        <input type="range" class="form-range" id="guidCountSlider" min="0" max="7" step="1" value="0">
+                        <div class="form-text text-secondary small mt-1">Max 20 at a time</div>
                     </div>
 
                     <button id="generateBtn" class="btn btn-primary w-100 mb-3">

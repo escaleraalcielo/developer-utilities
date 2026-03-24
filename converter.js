@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
     const inputEl = document.getElementById('inputData');
     const outputEl = document.getElementById('outputData');
+    const loadSampleBtn = document.getElementById('loadSampleBtn');
     const delimiterEl = document.getElementById('delimiter');
     const customDelimiterEl = document.getElementById('customDelimiter');
     const quoteTypeEl = document.getElementById('quoteType');
@@ -17,6 +18,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const outputStatsEl = document.getElementById('outputStats');
     const copyBtn = document.getElementById('copyBtn');
 
+
+    if (loadSampleBtn) {
+        loadSampleBtn.addEventListener('click', () => {
+            if (inputEl.value && !window.confirm('This will overwrite your current input. Continue?')) {
+                return;
+            }
+            inputEl.value = window.SampleData.columnConverter;
+            updateConversion();
+        });
+    }
 
     // Event Listeners for Processing
     const elementsToWatch = [

@@ -6,6 +6,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearBtn = document.getElementById('clearBtn');
     const copyBtn = document.getElementById('copyBtn');
     const indentSelect = document.getElementById('indentSelect');
+    const loadSampleBtn = document.getElementById('loadSampleBtn');
+
+    // --- Load Sample Logic ---
+    if (loadSampleBtn) {
+        loadSampleBtn.addEventListener('click', () => {
+            if (inputFormula.value.trim() !== '') {
+                const proceed = window.confirm("This will overwrite your current input. Do you want to continue?");
+                if (!proceed) return;
+            }
+
+            inputFormula.value = window.SampleData.formulaFormatter;
+            indentSelect.value = '4';
+            formatBtn.click();
+        });
+    }
 
     // Auto-resize for textarea if needed, but we use flex layout
 

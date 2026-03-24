@@ -18,6 +18,7 @@ if (typeof window !== 'undefined') {
 if (typeof document !== 'undefined') {
     document.addEventListener('DOMContentLoaded', () => {
         const guidCountEl = document.getElementById('guidCount');
+        const guidCountSlider = document.getElementById('guidCountSlider');
         const generateBtn = document.getElementById('generateBtn');
         const copyResultBtn = document.getElementById('copyResultBtn');
         const outputEl = document.getElementById('output');
@@ -27,6 +28,32 @@ if (typeof document !== 'undefined') {
         let sessionHistory = [];
         const HISTORY_LIMIT = 20;
 
+        // Slider logic
+        const sliderValues = [1, 2, 3, 4, 5, 10, 15, 20];
+
+        guidCountSlider.addEventListener('input', (e) => {
+            const index = parseInt(e.target.value);
+            guidCountEl.value = sliderValues[index];
+        });
+
+        guidCountEl.addEventListener('input', (e) => {
+            let val = parseInt(e.target.value) || 1;
+
+            // Find closest value in sliderValues
+            let closestIndex = 0;
+            let minDiff = Infinity;
+
+            sliderValues.forEach((num, index) => {
+                const diff = Math.abs(num - val);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closestIndex = index;
+                }
+            });
+
+            guidCountSlider.value = closestIndex;
+        });
+
         // UX: Clear input on focus
         guidCountEl.addEventListener('focus', () => {
             guidCountEl.value = '';
@@ -35,10 +62,15 @@ if (typeof document !== 'undefined') {
         generateBtn.addEventListener('click', () => {
             let count = parseInt(guidCountEl.value) || 1;
 
-            // Enforce limit of 20
+            // Enforce limits
             if (count > 20) {
                 count = 20;
                 guidCountEl.value = 20;
+                guidCountSlider.value = sliderValues.length - 1;
+            } else if (count < 1) {
+                count = 1;
+                guidCountEl.value = 1;
+                guidCountSlider.value = 0;
             }
 
             const guids = [];
@@ -112,7 +144,7 @@ if (typeof document !== 'undefined') {
                     <td class="align-middle text-secondary">${item.timestamp}</td>
                     <td class="align-middle text-info">${item.count}</td>
                     <td class="align-middle text-truncate" style="max-width: 300px;">
-                        <code class="text-light">${item.preview}</code>
+                        <code class="text-light">${escapeHtml(item.preview)}</code>
                     </td>
                     <td class="align-middle text-end">
                         <button class="btn btn-sm btn-link text-primary p-0 me-2" onclick="copyHistoryItem(${item.id})" title="Copy">
@@ -127,10 +159,12 @@ if (typeof document !== 'undefined') {
             });
         }
 
-    function escapeHtml(text) {
-        if (!text) return '';
-        return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    }
+        function escapeHtml(text) {
+            if (typeof document === 'undefined') return text;
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
     });
 }
 

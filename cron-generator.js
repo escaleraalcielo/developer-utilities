@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
+    const jobNameInput = document.getElementById('jobNameInput');
+    const jobNameOutput = document.getElementById('jobNameOutput');
+
     const frequencySelect = document.getElementById('frequencySelect');
     const hourSelect = document.getElementById('hourSelect');
     const minuteSelect = document.getElementById('minuteSelect');
@@ -34,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         generateCron();
     });
     customDayInput.addEventListener('input', generateCron);
+    jobNameInput.addEventListener('input', updateJobName);
 
     // Initial Setup
     updateUI();
@@ -100,6 +104,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         cronOutput.textContent = cronStr;
         cronStringExp.textContent = cronStr;
+    }
+
+    function updateJobName() {
+        const newJobName = jobNameInput.value.trim() || 'My Job Name';
+        jobNameOutput.textContent = newJobName;
     }
 
     // Copy Action
