@@ -29,12 +29,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Load Sample Logic ---
     if (loadSampleBtn) {
         loadSampleBtn.addEventListener('click', () => {
-            if (inputDataEl.value.trim() !== '') {
+            if (inputEl.value.trim() !== '') {
                 const proceed = window.confirm("This will overwrite your current input. Do you want to continue?");
                 if (!proceed) return;
             }
 
-            inputDataEl.value = window.SampleData.apexDebugLog;
+            inputEl.value = window.SampleData.apexDebugLog;
 
             // Check default filters plus maybe SOQL
             document.getElementById('filterSoql').checked = true;

@@ -23,13 +23,13 @@
     <!-- Main Container -->
     <div class="container-fluid h-100 py-4 d-flex flex-column">
         <!-- Header / Nav -->
-        <div class="row mb-4 align-items-center">
-            <div class="col-auto">
+        <div class="row mb-4 align-items-center position-relative">
+            <div class="col-auto position-relative z-1">
                 <a href="index.html" class="btn btn-outline-light btn-sm rounded-circle p-2" aria-label="Return to Home">
                     <i class="bi bi-arrow-left"></i>
                 </a>
             </div>
-            <div class="col text-center" style="margin-left: -40px;"> <!-- Offset for centering -->
+            <div class="col text-center position-absolute w-100 top-50 start-50 translate-middle">
                 <h1 class="h2 fw-bold mb-2">Apex <span class="text-gradient">Cron</span> Generator</h1>
                 <p class="text-secondary mb-0">Build System.schedule() Cron expressions for Salesforce.</p>
             </div>
