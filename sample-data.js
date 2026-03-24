@@ -1,7 +1,7 @@
 /**
  * Centralized Sample Data for Dev Utils tools
  */
-const SampleData = {
+window.SampleData = {
     columnConverter: `Acme Corporation
 Global Industries
 Stark Enterprises
@@ -64,5 +64,5 @@ It can handle multiple lines and symbols! @#$%^&*()`,
 };
 
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = SampleData;
+    module.exports = window.SampleData;
 }
