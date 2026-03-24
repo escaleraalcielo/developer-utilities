@@ -132,12 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
         saveBtn.addEventListener('click', () => {
             if (!outputEl.value) return;
 
-            const blob = new Blob([outputEl.value], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-
-            const a = document.createElement('a');
-            a.href = url;
-
             let downloadName = 'filtered_debug_log.log';
             if (originalFileName) {
                 const lastDotIndex = originalFileName.lastIndexOf('.');
@@ -149,14 +143,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     downloadName = `${originalFileName}_filtered.log`;
                 }
             }
-            a.download = downloadName;
 
-            document.body.appendChild(a);
-            a.click();
-
-            // Cleanup
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            window.downloadFile(outputEl.value, downloadName);
         });
     }
 
@@ -165,12 +153,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!outputEl.value) return;
 
         outputEl.select();
-        navigator.clipboard.writeText(outputEl.value).then(() => {
-            const toastEl = document.getElementById('copyToast');
-            if (toastEl && typeof bootstrap !== 'undefined') {
-                const toast = new bootstrap.Toast(toastEl);
-                toast.show();
-            }
-        });
+        window.copyToClipboard(outputEl.value, 'Log copied to clipboard!');
     });
 });

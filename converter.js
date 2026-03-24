@@ -347,36 +347,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 2. Perform Copy
         outputEl.select();
-
-        // Robust clipboard handling
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(outputEl.value).then(() => {
-                showCopyFeedback();
-            }).catch(err => {
-                console.warn('Clipboard API failed, falling back to execCommand', err);
-                fallbackCopy();
-            });
-        } else {
-            fallbackCopy();
-        }
+        window.copyToClipboard(outputEl.value, 'List copied to clipboard!');
     });
-
-    function fallbackCopy() {
-        try {
-            document.execCommand('copy');
-            showCopyFeedback();
-        } catch (err) {
-            console.error('Fallback copy failed', err);
-        }
-    }
-
-    function showCopyFeedback() {
-        const toastEl = document.getElementById('copyToast');
-        if (toastEl && typeof bootstrap !== 'undefined') {
-            const toast = new bootstrap.Toast(toastEl);
-            toast.show();
-        }
-    }
 
     function renderHistory() {
         historyCountEl.textContent = `${sessionHistory.length}/${HISTORY_LIMIT}`;
@@ -415,11 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.copyFromHistory = (id) => {
         const item = sessionHistory.find(i => i.id === id);
         if (item) {
-            navigator.clipboard.writeText(item.fullResult).then(() => {
-                const toastEl = document.getElementById('copyToast');
-                const toast = new bootstrap.Toast(toastEl);
-                toast.show();
-            });
+            window.copyToClipboard(item.fullResult, 'Copied from history!');
         }
     };
 

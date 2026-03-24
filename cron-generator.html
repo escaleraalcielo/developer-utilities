@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cron Generator | Dev Utils</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <script src="utils.js"></script>
+</head>
+<body class="app-mode">
+
+    <!-- Global Navigation -->
+    <div class="global-nav">
+        <a href="index.html" class="btn global-nav-btn" title="Return to Home">
+            <i class="bi bi-house-door fs-4"></i>
+        </a>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container-fluid h-100 py-4 d-flex flex-column">
+        <!-- Header -->
+        <header class="text-center mb-4 flex-shrink-0">
+            <h1 class="h2 fw-bold mb-2">Apex <span class="text-gradient">Cron</span> Generator</h1>
+            <p class="text-secondary mb-0">Build System.schedule() Cron expressions for Salesforce.</p>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="row justify-content-center flex-grow-1 min-h-0 g-4">
+            <div class="col-lg-8 d-flex flex-column h-100">
+                <div class="glass-panel p-4 mb-4">
+                    <h2 class="h5 text-white mb-3">Schedule Configuration</h2>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label text-secondary small">Frequency</label>
+                            <select id="frequencySelect" class="form-select bg-dark border-secondary text-white">
+                                <option value="hourly">Hourly</option>
+                                <option value="daily" selected>Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly">Monthly</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-secondary small">Time (Hour : Minute)</label>
+                            <div class="d-flex gap-2">
+                                <select id="hourSelect" class="form-select bg-dark border-secondary text-white">
+                                    <!-- Populated by JS -->
+                                </select>
+                                <span class="text-white align-self-center">:</span>
+                                <select id="minuteSelect" class="form-select bg-dark border-secondary text-white">
+                                    <option value="0">00</option>
+                                    <option value="15">15</option>
+                                    <option value="30">30</option>
+                                    <option value="45">45</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Weekly Options -->
+                        <div id="weeklyOptions" class="col-12 d-none">
+                            <label class="form-label text-secondary small">Days of Week</label>
+                            <div class="d-flex flex-wrap gap-2">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input day-checkbox" type="checkbox" id="day1" value="SUN">
+                                    <label class="form-check-label text-white" for="day1">Sun</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input day-checkbox" type="checkbox" id="day2" value="MON">
+                                    <label class="form-check-label text-white" for="day2">Mon</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input day-checkbox" type="checkbox" id="day3" value="TUE">
+                                    <label class="form-check-label text-white" for="day3">Tue</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input day-checkbox" type="checkbox" id="day4" value="WED">
+                                    <label class="form-check-label text-white" for="day4">Wed</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input day-checkbox" type="checkbox" id="day5" value="THU">
+                                    <label class="form-check-label text-white" for="day5">Thu</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input day-checkbox" type="checkbox" id="day6" value="FRI">
+                                    <label class="form-check-label text-white" for="day6">Fri</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input day-checkbox" type="checkbox" id="day7" value="SAT">
+                                    <label class="form-check-label text-white" for="day7">Sat</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Monthly Options -->
+                        <div id="monthlyOptions" class="col-12 d-none">
+                            <label class="form-label text-secondary small">Day of Month</label>
+                            <select id="dayOfMonthSelect" class="form-select bg-dark border-secondary text-white">
+                                <option value="1">1st of the month</option>
+                                <option value="15">15th of the month</option>
+                                <option value="L">Last day of the month</option>
+                                <option value="custom">Custom...</option>
+                            </select>
+
+                            <div id="customDayDiv" class="mt-2 d-none">
+                                <input type="number" id="customDayInput" class="form-control bg-dark text-white border-secondary" min="1" max="31" placeholder="e.g. 5">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Result Panel -->
+                <div class="glass-panel p-4 text-center mt-auto flex-shrink-0">
+                    <label class="form-label text-secondary small text-uppercase fw-bold mb-2">Cron Expression</label>
+                    <div class="d-flex align-items-center justify-content-center bg-dark rounded p-3 mb-3 border border-secondary border-opacity-50">
+                        <code id="cronOutput" class="fs-2 text-warning fw-bold">0 0 0 * * ?</code>
+                    </div>
+
+                    <div class="bg-dark bg-opacity-50 p-3 rounded mb-4 text-start">
+                        <p class="text-secondary small mb-1">Apex Code Example:</p>
+                        <code class="text-info">String cronExp = '<span id="cronStringExp">0 0 0 * * ?</span>';<br>
+                        System.schedule('My Job Name', cronExp, new MySchedulableClass());</code>
+                    </div>
+
+                    <button id="copyBtn" class="btn btn-primary btn-lg w-100">
+                        <i class="bi bi-clipboard me-2"></i> Copy Cron Expression
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- External Script -->
+    <script src="cron-generator.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
