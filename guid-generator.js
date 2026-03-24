@@ -121,7 +121,7 @@ if (typeof document !== 'undefined') {
                     <td class="align-middle text-secondary">${item.timestamp}</td>
                     <td class="align-middle text-info">${item.count}</td>
                     <td class="align-middle text-truncate" style="max-width: 300px;">
-                        <code class="text-light">${item.preview}</code>
+                        <code class="text-light">${escapeHtml(item.preview)}</code>
                     </td>
                     <td class="align-middle text-end">
                         <button class="btn btn-sm btn-link text-primary p-0 me-2" onclick="copyHistoryItem(${item.id})" title="Copy">
@@ -136,31 +136,11 @@ if (typeof document !== 'undefined') {
             });
         }
 
-        historyTableBody.innerHTML = '';
-        sessionHistory.forEach(item => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td class="align-middle text-secondary">${item.timestamp}</td>
-                <td class="align-middle text-info">${item.count}</td>
-                <td class="align-middle text-truncate" style="max-width: 300px;">
-                    <code class="text-light">${escapeHtml(item.preview)}</code>
-                </td>
-                <td class="align-middle text-end">
-                    <button class="btn btn-sm btn-link text-primary p-0 me-2" onclick="copyHistoryItem(${item.id})" title="Copy">
-                        <i class="bi bi-clipboard"></i>
-                    </button>
-                    <button class="btn btn-sm btn-link text-danger p-0" onclick="deleteHistoryItem(${item.id})" title="Delete">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </td>
-            `;
-            historyTableBody.appendChild(tr);
-        });
-    }
-
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-});
+        function escapeHtml(text) {
+            if (typeof document === 'undefined') return text;
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    });
+}
