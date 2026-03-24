@@ -113,9 +113,16 @@
                             <label class="form-label text-secondary small fw-bold text-uppercase mb-2">Input
                                 Text</label>
 
+                            <textarea id="inputText" class="form-control glass-input flex-grow-1 p-3 mb-2"
+                                placeholder="Type or paste text here (Max 5000 chars)..."></textarea>
+
+                            <div class="d-flex justify-content-end mb-3">
+                                <span class="text-secondary small" id="charCount">0/5000</span>
+                            </div>
+
                             <!-- Encode/Decode Toggle -->
                             <!-- Encode/Decode Toggle (Segmented Control) -->
-                            <div class="btn-group w-100 mb-3" role="group" aria-label="Text Conversion Mode">
+                            <div class="btn-group w-100" role="group" aria-label="Text Conversion Mode">
                                 <input type="radio" class="btn-check" name="textMode" id="modeEncode" value="encode"
                                     checked>
                                 <label class="btn btn-outline-light" for="modeEncode">
@@ -132,13 +139,6 @@
                                         (Base64 &rarr; Text)</span>
                                     <span class="d-inline d-sm-none">Decode</span>
                                 </label>
-                            </div>
-
-                            <textarea id="inputText" class="form-control glass-input flex-grow-1 p-3"
-                                placeholder="Type or paste text here (Max 5000 chars)..."></textarea>
-
-                            <div class="d-flex justify-content-end mt-2">
-                                <span class="text-secondary small" id="charCount">0/5000</span>
                             </div>
                         </div>
                     </div>
