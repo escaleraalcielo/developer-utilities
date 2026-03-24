@@ -18,6 +18,7 @@ if (typeof window !== 'undefined') {
 if (typeof document !== 'undefined') {
     document.addEventListener('DOMContentLoaded', () => {
         const guidCountEl = document.getElementById('guidCount');
+        const guidCountSlider = document.getElementById('guidCountSlider');
         const generateBtn = document.getElementById('generateBtn');
         const copyResultBtn = document.getElementById('copyResultBtn');
         const outputEl = document.getElementById('output');
@@ -27,6 +28,32 @@ if (typeof document !== 'undefined') {
         let sessionHistory = [];
         const HISTORY_LIMIT = 20;
 
+        // Slider logic
+        const sliderValues = [1, 2, 3, 4, 5, 10, 15, 20];
+
+        guidCountSlider.addEventListener('input', (e) => {
+            const index = parseInt(e.target.value);
+            guidCountEl.value = sliderValues[index];
+        });
+
+        guidCountEl.addEventListener('input', (e) => {
+            let val = parseInt(e.target.value) || 1;
+
+            // Find closest value in sliderValues
+            let closestIndex = 0;
+            let minDiff = Infinity;
+
+            sliderValues.forEach((num, index) => {
+                const diff = Math.abs(num - val);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closestIndex = index;
+                }
+            });
+
+            guidCountSlider.value = closestIndex;
+        });
+
         // UX: Clear input on focus
         guidCountEl.addEventListener('focus', () => {
             guidCountEl.value = '';
@@ -35,10 +62,15 @@ if (typeof document !== 'undefined') {
         generateBtn.addEventListener('click', () => {
             let count = parseInt(guidCountEl.value) || 1;
 
-            // Enforce limit of 20
+            // Enforce limits
             if (count > 20) {
                 count = 20;
                 guidCountEl.value = 20;
+                guidCountSlider.value = sliderValues.length - 1;
+            } else if (count < 1) {
+                count = 1;
+                guidCountEl.value = 1;
+                guidCountSlider.value = 0;
             }
 
             const guids = [];
@@ -58,7 +90,7 @@ if (typeof document !== 'undefined') {
             if (!result) return;
 
             // 1. Copy to Clipboard
-            window.copyToClipboard(result, 'Copied and Saved to History.');
+            copyToClipboard(result, 'Copied and Saved to History.');
             statusTextEl.textContent = 'Copied and Saved to History.';
 
             // 2. Add to History
@@ -85,7 +117,7 @@ if (typeof document !== 'undefined') {
         window.copyHistoryItem = (id) => {
             const item = sessionHistory.find(i => i.id === id);
             if (item) {
-                window.copyToClipboard(item.result, 'Copied from history.');
+                copyToClipboard(item.result, 'Copied from history.');
                 statusTextEl.textContent = 'Copied from history.';
             }
         };
@@ -112,7 +144,7 @@ if (typeof document !== 'undefined') {
                     <td class="align-middle text-secondary">${item.timestamp}</td>
                     <td class="align-middle text-info">${item.count}</td>
                     <td class="align-middle text-truncate" style="max-width: 300px;">
-                        <code class="text-light">${item.preview}</code>
+                        <code class="text-light">${escapeHtml(item.preview)}</code>
                     </td>
                     <td class="align-middle text-end">
                         <button class="btn btn-sm btn-link text-primary p-0 me-2" onclick="copyHistoryItem(${item.id})" title="Copy">
@@ -127,9 +159,94 @@ if (typeof document !== 'undefined') {
             });
         }
 
-    function escapeHtml(text) {
-        if (!text) return '';
-        return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    }
+        function escapeHtml(text) {
+            if (typeof document === 'undefined') return text;
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
     });
+}
+
+
+
+function showToast(message = 'Copied to clipboard!') {
+    let toastContainer = document.querySelector('.toast-container');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+        document.body.appendChild(toastContainer);
+    }
+
+    let toastEl = document.getElementById('globalToast');
+    if (!toastEl) {
+        toastEl = document.createElement('div');
+        toastEl.id = 'globalToast';
+        toastEl.className = 'toast align-items-center text-white bg-success border-0';
+        toastEl.setAttribute('role', 'alert');
+        toastEl.setAttribute('aria-live', 'assertive');
+        toastEl.setAttribute('aria-atomic', 'true');
+
+        toastEl.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="bi bi-check-circle me-2"></i> <span id="toastMessage"></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        `;
+        toastContainer.appendChild(toastEl);
+    }
+
+    document.getElementById('toastMessage').innerText = message;
+
+    if (typeof bootstrap !== 'undefined' && bootstrap.Toast) {
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+    } else {
+        toastEl.classList.add('show');
+        setTimeout(() => {
+            toastEl.classList.remove('show');
+        }, 3000);
+    }
+}
+
+function copyToClipboard(text, successMessage = 'Copied to clipboard!') {
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast(successMessage);
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+            fallbackCopyTextToClipboard(text, successMessage);
+        });
+    } else {
+        fallbackCopyTextToClipboard(text, successMessage);
+    }
+}
+
+function fallbackCopyTextToClipboard(text, successMessage) {
+    var textArea = document.createElement("textarea");
+    textArea.value = text;
+
+    // Avoid scrolling to bottom
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.position = "fixed";
+
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+        var successful = document.execCommand('copy');
+        if (successful) {
+            showToast(successMessage);
+        } else {
+            console.error('Fallback: Copying text command was unsuccessful');
+        }
+    } catch (err) {
+        console.error('Fallback: Oops, unable to copy', err);
+    }
+
+    document.body.removeChild(textArea);
 }
