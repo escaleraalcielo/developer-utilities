@@ -42,50 +42,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
     downloadBtn.addEventListener('click', () => {
         if (!csvContent) return;
-
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.setAttribute('href', url);
-        link.setAttribute('download', 'Assignment_Upload.csv');
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        window.downloadFile(csvContent, 'Assignment_Upload.csv', 'text/csv;charset=utf-8;');
     });
 
     copyExcelBtn.addEventListener('click', () => {
         if (!clipboardContent) return;
 
-        navigator.clipboard.writeText(clipboardContent).then(() => {
-            const originalText = copyExcelBtn.innerHTML;
-            copyExcelBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i> Copied!';
-            copyExcelBtn.classList.remove('btn-primary');
-            copyExcelBtn.classList.add('btn-success');
+        window.copyToClipboard(clipboardContent, 'Excel format copied!');
+        const originalText = copyExcelBtn.innerHTML;
+        copyExcelBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i> Copied!';
+        copyExcelBtn.classList.remove('btn-primary');
+        copyExcelBtn.classList.add('btn-success');
 
-            setTimeout(() => {
-                copyExcelBtn.innerHTML = originalText;
-                copyExcelBtn.classList.add('btn-primary');
-                copyExcelBtn.classList.remove('btn-success');
-            }, 1500);
-        });
+        setTimeout(() => {
+            copyExcelBtn.innerHTML = originalText;
+            copyExcelBtn.classList.add('btn-primary');
+            copyExcelBtn.classList.remove('btn-success');
+        }, 1500);
     });
 
     copyCsvBtn.addEventListener('click', () => {
         if (!csvContent) return;
 
-        navigator.clipboard.writeText(csvContent).then(() => {
-            const originalText = copyCsvBtn.innerHTML;
-            copyCsvBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i> Copied!';
-            copyCsvBtn.classList.remove('btn-primary');
-            copyCsvBtn.classList.add('btn-success');
+        window.copyToClipboard(csvContent, 'CSV format copied!');
+        const originalText = copyCsvBtn.innerHTML;
+        copyCsvBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i> Copied!';
+        copyCsvBtn.classList.remove('btn-primary');
+        copyCsvBtn.classList.add('btn-success');
 
-            setTimeout(() => {
-                copyCsvBtn.innerHTML = originalText;
-                copyCsvBtn.classList.add('btn-primary');
-                copyCsvBtn.classList.remove('btn-success');
-            }, 1500);
-        });
+        setTimeout(() => {
+            copyCsvBtn.innerHTML = originalText;
+            copyCsvBtn.classList.add('btn-primary');
+            copyCsvBtn.classList.remove('btn-success');
+        }, 1500);
     });
 
     cleanUsersBtn.addEventListener('click', () => {

@@ -120,9 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         outputEl.select();
-        navigator.clipboard.writeText(content).then(() => {
-            showToast();
-        });
+        window.copyToClipboard(content, 'Copied to clipboard!');
     });
 
     clearBtn.addEventListener('click', resetUI);
@@ -260,9 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.copyFromHistory = (id) => {
         const item = sessionHistory.find(i => i.id === id);
         if (item) {
-            navigator.clipboard.writeText(item.fullResult).then(() => {
-                showToast();
-            });
+            window.copyToClipboard(item.fullResult, 'Copied from history!');
         }
     };
 

@@ -1,4 +1,6 @@
-function escapeHtml(text) {
+import os
+
+utils_content = """function escapeHtml(text) {
     if (!text) return '';
     return text
         .replace(/&/g, "&amp;")
@@ -86,3 +88,7 @@ if (typeof window !== 'undefined') {
     window.copyToClipboard = copyToClipboard;
     window.downloadFile = downloadFile;
 }
+"""
+
+with open('utils.js', 'w') as f:
+    f.write(utils_content)

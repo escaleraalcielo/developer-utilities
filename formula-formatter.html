@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formula Formatter | Dev Utils</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <script src="utils.js"></script>
+</head>
+<body class="app-mode">
+
+    <!-- Global Navigation -->
+    <div class="global-nav">
+        <a href="index.html" class="btn global-nav-btn" title="Return to Home">
+            <i class="bi bi-house-door fs-4"></i>
+        </a>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container-fluid h-100 py-4 d-flex flex-column">
+        <!-- Header -->
+        <header class="text-center mb-4 flex-shrink-0">
+            <h1 class="h2 fw-bold mb-2">Formula <span class="text-gradient">Formatter</span></h1>
+            <p class="text-secondary mb-0">Format and indent massive Salesforce formula fields.</p>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="row g-4 flex-grow-1 min-h-0">
+            <!-- Left Panel: Input -->
+            <div class="col-lg-6 d-flex flex-column h-100">
+                <div class="glass-panel p-4 d-flex flex-column h-100">
+                    <label for="inputFormula" class="form-label text-secondary small text-uppercase fw-bold mb-3">Raw Formula</label>
+                    <textarea id="inputFormula" class="form-control font-monospace flex-grow-1 mb-3"
+                        placeholder="Paste unformatted Salesforce formula here...&#10;e.g. IF(ISPICKVAL(StageName, 'Closed Won'), Amount * 0.1, 0)"></textarea>
+
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label class="form-label text-secondary small">Indentation</label>
+                            <select id="indentSelect" class="form-select bg-dark border-secondary text-white">
+                                <option value="2">2 Spaces</option>
+                                <option value="4" selected>4 Spaces</option>
+                                <option value="\t">Tabs</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-6 d-flex align-items-end">
+                            <button id="formatBtn" class="btn btn-primary w-100 py-2">
+                                <i class="bi bi-magic me-2"></i> Format Formula
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Output -->
+            <div class="col-lg-6 d-flex flex-column h-100">
+                <div class="glass-panel p-4 d-flex flex-column h-100 position-relative">
+                    <label for="outputFormula" class="form-label text-secondary small text-uppercase fw-bold mb-3">Formatted Output</label>
+                    <textarea id="outputFormula" class="form-control font-monospace flex-grow-1 mb-3" readonly
+                        placeholder="Formatted formula will appear here..."></textarea>
+
+                    <div class="d-flex gap-2">
+                        <button id="copyBtn" class="btn btn-outline-success flex-grow-1" disabled>
+                            <i class="bi bi-clipboard me-2"></i> Copy Formula
+                        </button>
+                        <button id="clearBtn" class="btn btn-outline-danger">
+                            <i class="bi bi-trash me-2"></i> Clear
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- External Script -->
+    <script src="formula-formatter.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

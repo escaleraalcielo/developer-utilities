@@ -58,15 +58,8 @@ if (typeof document !== 'undefined') {
             if (!result) return;
 
             // 1. Copy to Clipboard
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(result).then(() => {
-                    statusTextEl.textContent = 'Copied and Saved to History.';
-                }).catch(err => {
-                    statusTextEl.textContent = 'Copy failed, but saved to history.';
-                });
-            } else {
-                 statusTextEl.textContent = 'Clipboard not available, but saved to history.';
-            }
+            window.copyToClipboard(result, 'Copied and Saved to History.');
+            statusTextEl.textContent = 'Copied and Saved to History.';
 
             // 2. Add to History
             const items = result.split('\n');
@@ -92,9 +85,7 @@ if (typeof document !== 'undefined') {
         window.copyHistoryItem = (id) => {
             const item = sessionHistory.find(i => i.id === id);
             if (item) {
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(item.result);
-                }
+                window.copyToClipboard(item.result, 'Copied from history.');
                 statusTextEl.textContent = 'Copied from history.';
             }
         };

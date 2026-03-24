@@ -212,15 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const text = items.join('\n');
 
-        navigator.clipboard.writeText(text).then(() => {
-            const toastEl = document.getElementById('copyToast');
-            if (toastEl && typeof bootstrap !== 'undefined') {
-                const toast = new bootstrap.Toast(toastEl);
-                toast.show();
-            }
-        }).catch(err => {
-            console.error('Copy failed', err);
-        });
+        window.copyToClipboard(text, 'List copied to clipboard!');
     };
 
 });
