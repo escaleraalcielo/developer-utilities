@@ -108,6 +108,16 @@
                             Formats as 'ID1', 'ID2' for queries.
                         </div>
                     </div>
+
+                    <div class="mb-3 mt-4">
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="optionClean">
+                            <label class="form-check-label small text-secondary" for="optionClean">Clean Results</label>
+                        </div>
+                        <div class="form-text text-secondary small fst-italic ms-1" style="font-size: 0.75rem;">
+                            Removes invalid IDs into a separate list.
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -117,6 +127,12 @@
                     <label for="outputData" class="form-label text-secondary small fw-bold text-uppercase mb-3">Result
                         (18 characters)</label>
                     <textarea id="outputData" class="form-control glass-input flex-grow-1 p-3" readonly></textarea>
+
+                    <!-- Removed Results Container -->
+                    <div id="removedContainer" class="d-none mt-3 flex-grow-1 d-flex flex-column">
+                        <label for="removedData" class="form-label text-danger small fw-bold text-uppercase mb-2">Removed Results</label>
+                        <textarea id="removedData" class="form-control glass-input flex-grow-1 p-3" readonly style="min-height: 100px;"></textarea>
+                    </div>
 
                     <!-- Validation Warning -->
                     <div id="validationMessage" class="alert alert-warning d-none mt-2 mb-0 py-2 small" role="alert">
