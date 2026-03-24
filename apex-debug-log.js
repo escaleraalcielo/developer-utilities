@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const logFileInput = document.getElementById('logFileInput');
     const uploadBtn = document.getElementById('uploadBtn');
     const saveBtn = document.getElementById('saveBtn');
-    const loadSampleBtn = document.getElementById('loadSampleBtn');
 
     // Filters
     const filterCheckboxes = document.querySelectorAll('.filter-checkbox');
@@ -25,24 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Global func for clear button
     window.updateFilter = updateFilter;
-
-    // --- Load Sample Logic ---
-    if (loadSampleBtn) {
-        loadSampleBtn.addEventListener('click', () => {
-            if (inputDataEl.value.trim() !== '') {
-                const proceed = window.confirm("This will overwrite your current input. Do you want to continue?");
-                if (!proceed) return;
-            }
-
-            inputDataEl.value = window.SampleData.apexDebugLog;
-
-            // Check default filters plus maybe SOQL
-            document.getElementById('filterSoql').checked = true;
-            customFilterEl.value = '';
-
-            updateFilter();
-        });
-    }
 
     // File Upload Logic
     uploadBtn.addEventListener('click', () => {

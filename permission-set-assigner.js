@@ -2,6 +2,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // Elements
     const permSetIdsInput = document.getElementById('permSetIds'); // Changed ID
     const userIdsInput = document.getElementById('userIds');
+    const loadSampleUsersBtn = document.getElementById('loadSampleUsersBtn');
+
+    // Tooltip initialization
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+    if (loadSampleUsersBtn) {
+        loadSampleUsersBtn.addEventListener('click', () => {
+            userIdsInput.value = `0055f0000053QLvAAM
+0055f0000053QLwAAM
+0055f0000053QLxAAM`;
+            updateStats();
+        });
+    }
     const generateBtn = document.getElementById('generateBtn');
     const downloadBtn = document.getElementById('downloadBtn');
     const copyExcelBtn = document.getElementById('copyExcelBtn');
@@ -15,7 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const dropZone = document.getElementById('dropZone');
     const cleanUsersBtn = document.getElementById('cleanUsersBtn');
     const cleanPermsBtn = document.getElementById('cleanPermsBtn');
-    const loadSampleBtn = document.getElementById('loadSampleBtn');
 
     // Type Toggles
     const typePermSet = document.getElementById('typePermSet');
@@ -25,26 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let csvContent = ''; // Store generated CSV blob content
     let clipboardContent = ''; // Store generated TSV for clipboard
-
-    // --- Load Sample Logic ---
-    if (loadSampleBtn) {
-        loadSampleBtn.addEventListener('click', () => {
-            if (userIdsInput.value.trim() !== '' || permSetIdsInput.value.trim() !== '') {
-                const proceed = window.confirm("This will overwrite your current input. Do you want to continue?");
-                if (!proceed) return;
-            }
-
-            userIdsInput.value = window.SampleData.permissionSetAssigner.users;
-            permSetIdsInput.value = window.SampleData.permissionSetAssigner.permSets;
-
-            typePermSet.checked = true;
-            updateUIForType();
-            updateStats();
-            updatePermStats();
-            // Automatically generate
-            generateCSV();
-        });
-    }
 
     // --- Event Listeners ---
     permSetIdsInput.addEventListener('input', () => {

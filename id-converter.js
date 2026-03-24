@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const validationMessageEl = document.getElementById('validationMessage');
     const validationTextEl = document.getElementById('validationText');
     const copyBtn = document.getElementById('copyBtn');
-    const loadSampleBtn = document.getElementById('loadSampleBtn');
 
     // Event Listeners
     inputEl.addEventListener('input', updateConversion);
@@ -80,21 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
         outputEl.select();
         copyToClipboard(outputEl.value, 'IDs copied to clipboard!');
     });
-
-    // --- Load Sample Logic ---
-    if (loadSampleBtn) {
-        loadSampleBtn.addEventListener('click', () => {
-            if (inputEl.value.trim() !== '') {
-                const proceed = window.confirm("This will overwrite your current input. Do you want to continue?");
-                if (!proceed) return;
-            }
-
-            inputEl.value = window.SampleData.idConverter;
-
-            optionSoqlEl.checked = true;
-            updateConversion();
-        });
-    }
 
 });
 

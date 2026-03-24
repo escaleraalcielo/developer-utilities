@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputA = document.getElementById('inputA');
     const inputB = document.getElementById('inputB');
     const optSmartSF = document.getElementById('optSmartSF');
-    const loadSampleBtn = document.getElementById('loadSampleBtn');
     const optCaseSensitive = document.getElementById('optCaseSensitive');
     const optRemoveDupes = document.getElementById('optRemoveDupes');
     const optTrim = document.getElementById('optTrim');
@@ -38,24 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
         inputB.value = '';
         updateDiff();
     });
-
-    // --- Load Sample Logic ---
-    if (loadSampleBtn) {
-        loadSampleBtn.addEventListener('click', () => {
-            if (inputA.value.trim() !== '' || inputB.value.trim() !== '') {
-                const proceed = window.confirm("This will overwrite your current input. Do you want to continue?");
-                if (!proceed) return;
-            }
-
-            // Sample data demonstrating 15 vs 18 char SF IDs, common elements, and unique elements
-            inputA.value = window.SampleData.listDiff.listA;
-            inputB.value = window.SampleData.listDiff.listB;
-
-            optSmartSF.checked = true;
-            optRemoveDupes.checked = true;
-            updateDiff();
-        });
-    }
 
     // Initial Run
     updateDiff();

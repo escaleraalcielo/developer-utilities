@@ -7,20 +7,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const copyBtn = document.getElementById('copyBtn');
     const indentSelect = document.getElementById('indentSelect');
     const loadSampleBtn = document.getElementById('loadSampleBtn');
+    const saveBtn = document.getElementById('saveBtn');
 
-    // --- Load Sample Logic ---
-    if (loadSampleBtn) {
-        loadSampleBtn.addEventListener('click', () => {
-            if (inputFormula.value.trim() !== '') {
-                const proceed = window.confirm("This will overwrite your current input. Do you want to continue?");
-                if (!proceed) return;
-            }
-
-            inputFormula.value = window.SampleData.formulaFormatter;
-            indentSelect.value = '4';
-            formatBtn.click();
-        });
-    }
+    // Load Sample Formula
+    loadSampleBtn.addEventListener('click', () => {
+        inputFormula.value = `IF(ISPICKVAL(StageName, 'Closed Won'), Amount * 0.1, IF(ISPICKVAL(StageName, 'Negotiation/Review'), Amount * 0.05, 0))`;
+    });
 
     // Auto-resize for textarea if needed, but we use flex layout
 
@@ -38,6 +30,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const formatted = formatSalesforceFormula(raw, indentChar);
         outputFormula.value = formatted;
         copyBtn.disabled = false;
+        saveBtn.disabled = false;
+    });
+
+    saveBtn.addEventListener('click', () => {
+        if (!outputFormula.value) return;
+        const blob = new Blob([outputFormula.value], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'formatted_formula.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     });
 
     copyBtn.addEventListener('click', () => {
@@ -50,6 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         inputFormula.value = '';
         outputFormula.value = '';
         copyBtn.disabled = true;
+        saveBtn.disabled = true;
     });
 
     /**

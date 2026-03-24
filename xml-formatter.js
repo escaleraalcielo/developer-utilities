@@ -10,26 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const copyBtn = document.getElementById('copyBtn');
     const validationMessage = document.getElementById('validationMessage');
     const validationText = document.getElementById('validationText');
-    const loadSampleBtn = document.getElementById('loadSampleBtn');
 
     let currentMode = 'format'; // 'format' or 'minify'
-
-    // --- Load Sample Logic ---
-    if (loadSampleBtn) {
-        loadSampleBtn.addEventListener('click', () => {
-            if (inputEl.value.trim() !== '') {
-                const proceed = window.confirm("This will overwrite your current input. Do you want to continue?");
-                if (!proceed) return;
-            }
-
-            inputEl.value = window.SampleData.xmlFormatter;
-
-            // Set to format mode
-            btnFormat.click();
-            indentSizeEl.value = '4';
-            processXml();
-        });
-    }
 
     // Event Listeners
     inputEl.addEventListener('input', () => {

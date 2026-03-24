@@ -22,18 +22,35 @@
 
     <!-- Main Container -->
     <div class="container-fluid h-100 py-4 d-flex flex-column">
-        <!-- Header -->
-        <header class="text-center mb-4 flex-shrink-0">
-            <h1 class="h2 fw-bold mb-2">Formula <span class="text-gradient">Formatter</span></h1>
-            <p class="text-secondary mb-0">Format and indent massive Salesforce formula fields.</p>
-        </header>
+        <!-- Header / Nav -->
+        <div class="row mb-4 align-items-center">
+            <div class="col-auto">
+                <a href="index.html" class="btn btn-outline-light btn-sm rounded-circle p-2" aria-label="Return to Home">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+            </div>
+            <div class="col">
+                <h1 class="h4 mb-0 fw-bold">Formula Formatter</h1>
+                <p class="text-secondary mb-0 small mt-1">Format and indent massive Salesforce formula fields.</p>
+            </div>
+        </div>
 
         <!-- Main Workspace -->
         <main class="row g-4 flex-grow-1 min-h-0">
             <!-- Left Panel: Input -->
             <div class="col-lg-6 d-flex flex-column h-100">
                 <div class="glass-panel p-4 d-flex flex-column h-100">
-                    <label for="inputFormula" class="form-label text-secondary small text-uppercase fw-bold mb-3">Raw Formula</label>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <label for="inputFormula" class="form-label text-secondary small text-uppercase fw-bold mb-0">Raw Formula</label>
+                        <div class="d-flex gap-2">
+                            <button id="loadSampleBtn" class="btn btn-sm btn-outline-light text-secondary border-0" title="Load Sample" aria-label="Load Sample">
+                                <i class="bi bi-file-earmark-text"></i>
+                            </button>
+                            <button id="clearBtn" class="btn btn-sm btn-outline-light text-secondary border-0" title="Clear" aria-label="Clear">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
                     <textarea id="inputFormula" class="form-control font-monospace flex-grow-1 mb-3"
                         placeholder="Paste unformatted Salesforce formula here...&#10;e.g. IF(ISPICKVAL(StageName, 'Closed Won'), Amount * 0.1, 0)"></textarea>
 
@@ -58,19 +75,20 @@
             <!-- Right Panel: Output -->
             <div class="col-lg-6 d-flex flex-column h-100">
                 <div class="glass-panel p-4 d-flex flex-column h-100 position-relative">
-                    <label for="outputFormula" class="form-label text-secondary small text-uppercase fw-bold mb-3">Formatted Output</label>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <label for="outputFormula" class="form-label text-secondary small text-uppercase fw-bold mb-0">Formatted Output</label>
+                        <div class="d-flex gap-2">
+                            <button id="saveBtn" class="btn btn-sm btn-outline-light text-secondary border-0" title="Save" aria-label="Save" disabled>
+                                <i class="bi bi-save"></i>
+                            </button>
+                        </div>
+                    </div>
                     <textarea id="outputFormula" class="form-control font-monospace flex-grow-1 mb-3" readonly
                         placeholder="Formatted formula will appear here..."></textarea>
 
                     <div class="d-flex gap-2">
-                        <button id="loadSampleBtn" class="btn btn-outline-info flex-grow-1" title="Load Sample Data">
-                            <i class="bi bi-file-earmark-text me-2"></i> Load Sample
-                        </button>
                         <button id="copyBtn" class="btn btn-outline-success flex-grow-1" disabled>
                             <i class="bi bi-clipboard me-2"></i> Copy Formula
-                        </button>
-                        <button id="clearBtn" class="btn btn-outline-danger">
-                            <i class="bi bi-trash me-2"></i> Clear
                         </button>
                     </div>
                 </div>
@@ -79,8 +97,7 @@
     </div>
 
     <!-- External Script -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="sample-data.js"></script>
     <script src="formula-formatter.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
