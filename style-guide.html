@@ -134,8 +134,14 @@
                 <div class="glass-panel p-4">
                     <h2 class="h3 mb-4 text-white border-bottom border-secondary pb-2">5. Global Utilities</h2>
                     <p>Click the button below to trigger the global Toast notification.</p>
-                    <button class="btn btn-primary" onclick="alert('Toast demo disabled due to utility refactoring')">
+                    <button class="btn btn-primary mb-4" onclick="alert('Toast demo disabled due to utility refactoring')">
                         <i class="bi bi-clipboard me-2"></i> Trigger Toast / Copy
+                    </button>
+
+                    <h3 class="h5 mt-4 mb-3 text-white">Confirmation Dialog</h3>
+                    <p class="small text-secondary mb-3">Use the standard `window.confirm` for destructive actions or overwriting data, such as the "Load Sample" functionality when an input area is not empty.</p>
+                    <button class="btn btn-outline-warning" onclick="window.confirm('This will overwrite your current input. Do you want to continue?')">
+                        <i class="bi bi-exclamation-triangle me-2"></i> Trigger Confirm Dialog
                     </button>
                 </div>
             </section>
