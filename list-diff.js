@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const optSmartSF = document.getElementById('optSmartSF');
     const optCaseSensitive = document.getElementById('optCaseSensitive');
     const optRemoveDupes = document.getElementById('optRemoveDupes');
+    const optTrim = document.getElementById('optTrim');
+    const optRemoveEmpty = document.getElementById('optRemoveEmpty');
     const clearAllBtn = document.getElementById('clearAllBtn');
 
     // Stats
@@ -27,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Events
-    const inputs = [inputA, inputB, optSmartSF, optCaseSensitive, optRemoveDupes, document.getElementById('optSort')];
+    const inputs = [inputA, inputB, optSmartSF, optCaseSensitive, optRemoveDupes, optTrim, optRemoveEmpty, document.getElementById('optSort')];
     inputs.forEach(el => el.addEventListener('input', updateDiff));
 
     clearAllBtn.addEventListener('click', () => {
@@ -44,11 +46,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const isSmartSF = optSmartSF.checked;
         const isCaseSensitive = optCaseSensitive.checked;
         const shouldRemoveDupes = optRemoveDupes.checked;
+        const shouldTrim = optTrim.checked;
+        const shouldRemoveEmpty = optRemoveEmpty.checked;
         const sortMode = document.getElementById('optSort').value;
 
         // 2. Process Inputs
-        const listA = parseInput(inputA.value);
-        const listB = parseInput(inputB.value);
+        const listA = parseInput(inputA.value, shouldTrim, shouldRemoveEmpty);
+        const listB = parseInput(inputB.value, shouldTrim, shouldRemoveEmpty);
 
         countA.innerText = listA.length;
         countB.innerText = listB.length;
@@ -89,10 +93,20 @@ document.addEventListener('DOMContentLoaded', () => {
         renderList(resCommon, resultSets.common, countCommon);
     }
 
-    function parseInput(text) {
+    function parseInput(text, shouldTrim, shouldRemoveEmpty) {
         if (!text) return [];
         // Split by newline
-        return text.split(/\r?\n/);
+        let lines = text.split(/\r?\n/);
+
+        if (shouldTrim) {
+            lines = lines.map(line => line.trim());
+        }
+
+        if (shouldRemoveEmpty) {
+            lines = lines.filter(line => line !== '');
+        }
+
+        return lines;
     }
 
     function buildMap(list, isSmartSF, isCaseSensitive) {
