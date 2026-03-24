@@ -22,11 +22,18 @@
 
     <!-- Main Container -->
     <div class="container-fluid h-100 py-4 d-flex flex-column">
-        <!-- Header -->
-        <header class="text-center mb-4 flex-shrink-0">
-            <h1 class="h2 fw-bold mb-2">API Name <span class="text-gradient">Generator</span></h1>
-            <p class="text-secondary mb-0">Convert field/object labels to valid Salesforce API names.</p>
-        </header>
+        <!-- Header / Nav -->
+        <div class="row mb-4 align-items-center">
+            <div class="col-auto">
+                <a href="index.html" class="btn btn-outline-light btn-sm rounded-circle p-2" aria-label="Return to Home">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+            </div>
+            <div class="col">
+                <h1 class="h4 mb-0 fw-bold">API Name Generator</h1>
+                <p class="text-secondary mb-0 small mt-1">Convert field/object labels to valid Salesforce API names.</p>
+            </div>
+        </div>
 
         <!-- Main Workspace -->
         <main class="row g-4 flex-grow-1 min-h-0">
@@ -39,6 +46,17 @@
                     </div>
                     <textarea id="inputLabels" class="form-control font-monospace flex-grow-1 mb-3"
                         placeholder="e.g.&#10;Customer First Name&#10;Annual ROI (%)&#10;Is Active?"></textarea>
+
+                    <div class="d-flex justify-content-end mb-3">
+                        <div class="d-flex gap-2">
+                            <button id="loadSampleBtn" class="btn btn-sm btn-outline-light text-secondary border-0" title="Load Sample">
+                                <i class="bi bi-file-earmark-text me-1"></i> Load Sample
+                            </button>
+                            <button id="clearBtn" class="btn btn-sm btn-outline-light text-secondary border-0" title="Clear">
+                                <i class="bi bi-trash me-1"></i> Clear
+                            </button>
+                        </div>
+                    </div>
 
                     <div class="row g-3">
                         <div class="col-sm-6">
@@ -76,9 +94,6 @@
                         </button>
                         <button id="copyBtn" class="btn btn-outline-success flex-grow-1" disabled>
                             <i class="bi bi-clipboard me-2"></i> Copy All
-                        </button>
-                        <button id="clearBtn" class="btn btn-outline-danger">
-                            <i class="bi bi-trash me-2"></i> Clear
                         </button>
                     </div>
                 </div>

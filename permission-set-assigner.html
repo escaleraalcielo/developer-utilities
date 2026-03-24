@@ -116,8 +116,11 @@ Example:
                     <div class="d-flex justify-content-between mt-3 align-items-center">
                         <span class="text-secondary small" id="inputStats">0 lines</span>
                         <div class="d-flex gap-2">
+                            <button id="loadSampleUsersBtn" class="btn btn-sm btn-outline-light text-secondary border-0" title="Load Sample User IDs">
+                                <i class="bi bi-file-earmark-text me-1"></i> Load Sample
+                            </button>
                             <button id="cleanUsersBtn" class="btn btn-sm btn-outline-info border-0"
-                                title="Extracts valid User IDs (starting with 005) and removes duplicates.">
+                                title="Extracts valid User IDs (starting with 005) and removes duplicates." data-bs-toggle="tooltip" data-bs-placement="top">
                                 <i class="bi bi-stars me-1"></i> Clean
                             </button>
                             <button id="clearUsersBtn" class="btn btn-sm btn-outline-light text-secondary border-0"

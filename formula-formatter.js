@@ -38,6 +38,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const formatted = formatSalesforceFormula(raw, indentChar);
         outputFormula.value = formatted;
         copyBtn.disabled = false;
+        saveBtn.disabled = false;
+    });
+
+    saveBtn.addEventListener('click', () => {
+        if (!outputFormula.value) return;
+        const blob = new Blob([outputFormula.value], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'formatted_formula.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     });
 
     copyBtn.addEventListener('click', () => {
@@ -50,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
         inputFormula.value = '';
         outputFormula.value = '';
         copyBtn.disabled = true;
+        saveBtn.disabled = true;
     });
 
     /**

@@ -2,6 +2,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // Elements
     const permSetIdsInput = document.getElementById('permSetIds'); // Changed ID
     const userIdsInput = document.getElementById('userIds');
+    const loadSampleUsersBtn = document.getElementById('loadSampleUsersBtn');
+
+    // Tooltip initialization
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+    if (loadSampleUsersBtn) {
+        loadSampleUsersBtn.addEventListener('click', () => {
+            userIdsInput.value = `0055f0000053QLvAAM
+0055f0000053QLwAAM
+0055f0000053QLxAAM`;
+            updateStats();
+        });
+    }
     const generateBtn = document.getElementById('generateBtn');
     const downloadBtn = document.getElementById('downloadBtn');
     const copyExcelBtn = document.getElementById('copyExcelBtn');
