@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputA = document.getElementById('inputA');
     const inputB = document.getElementById('inputB');
     const optSmartSF = document.getElementById('optSmartSF');
+    const loadSampleBtn = document.getElementById('loadSampleBtn');
     const optCaseSensitive = document.getElementById('optCaseSensitive');
     const optRemoveDupes = document.getElementById('optRemoveDupes');
     const optTrim = document.getElementById('optTrim');
@@ -37,6 +38,24 @@ document.addEventListener('DOMContentLoaded', () => {
         inputB.value = '';
         updateDiff();
     });
+
+    // --- Load Sample Logic ---
+    if (loadSampleBtn) {
+        loadSampleBtn.addEventListener('click', () => {
+            if (inputA.value.trim() !== '' || inputB.value.trim() !== '') {
+                const proceed = window.confirm("This will overwrite your current input. Do you want to continue?");
+                if (!proceed) return;
+            }
+
+            // Sample data demonstrating 15 vs 18 char SF IDs, common elements, and unique elements
+            inputA.value = window.SampleData.listDiff.listA;
+            inputB.value = window.SampleData.listDiff.listB;
+
+            optSmartSF.checked = true;
+            optRemoveDupes.checked = true;
+            updateDiff();
+        });
+    }
 
     // Initial Run
     updateDiff();
@@ -226,7 +245,100 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const text = items.join('\n');
 
-        window.copyToClipboard(text, 'List copied to clipboard!');
+        copyToClipboard(text, 'List copied to clipboard!');
     };
 
 });
+
+
+
+function escapeHtml(text) {
+    if (!text) return '';
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function showToast(message = 'Copied to clipboard!') {
+    let toastContainer = document.querySelector('.toast-container');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+        document.body.appendChild(toastContainer);
+    }
+
+    let toastEl = document.getElementById('globalToast');
+    if (!toastEl) {
+        toastEl = document.createElement('div');
+        toastEl.id = 'globalToast';
+        toastEl.className = 'toast align-items-center text-white bg-success border-0';
+        toastEl.setAttribute('role', 'alert');
+        toastEl.setAttribute('aria-live', 'assertive');
+        toastEl.setAttribute('aria-atomic', 'true');
+
+        toastEl.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="bi bi-check-circle me-2"></i> <span id="toastMessage"></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        `;
+        toastContainer.appendChild(toastEl);
+    }
+
+    document.getElementById('toastMessage').innerText = message;
+
+    if (typeof bootstrap !== 'undefined' && bootstrap.Toast) {
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+    } else {
+        toastEl.classList.add('show');
+        setTimeout(() => {
+            toastEl.classList.remove('show');
+        }, 3000);
+    }
+}
+
+function copyToClipboard(text, successMessage = 'Copied to clipboard!') {
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast(successMessage);
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+            fallbackCopyTextToClipboard(text, successMessage);
+        });
+    } else {
+        fallbackCopyTextToClipboard(text, successMessage);
+    }
+}
+
+function fallbackCopyTextToClipboard(text, successMessage) {
+    var textArea = document.createElement("textarea");
+    textArea.value = text;
+
+    // Avoid scrolling to bottom
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.position = "fixed";
+
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+        var successful = document.execCommand('copy');
+        if (successful) {
+            showToast(successMessage);
+        } else {
+            console.error('Fallback: Copying text command was unsuccessful');
+        }
+    } catch (err) {
+        console.error('Fallback: Oops, unable to copy', err);
+    }
+
+    document.body.removeChild(textArea);
+}

@@ -12,7 +12,7 @@
     <link rel="icon" type="image/png" href="favicon.png">
 
     <!-- Load shared utilities -->
-    <script src="utils.js"></script>
+
 </head>
 
 <body>
@@ -116,6 +116,15 @@
                                 <label class="form-check-label" for="flexSwitchCheckDefault">Toggle Switch Option</label>
                             </div>
                         </div>
+
+                        <div class="col-12">
+                            <label class="form-label text-secondary small text-uppercase fw-bold">Range Slider</label>
+                            <input type="range" class="form-range" min="0" max="7" step="1" id="customRangeGuide">
+                            <div class="d-flex justify-content-between text-secondary small mt-1">
+                                <span>Min</span>
+                                <span>Max</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -124,9 +133,15 @@
             <section class="col-12">
                 <div class="glass-panel p-4">
                     <h2 class="h3 mb-4 text-white border-bottom border-secondary pb-2">5. Global Utilities</h2>
-                    <p>Click the button below to trigger the global Toast notification from <code>utils.js</code>.</p>
-                    <button class="btn btn-primary" onclick="window.copyToClipboard('Test content', 'Global toast triggered!')">
+                    <p>Click the button below to trigger the global Toast notification.</p>
+                    <button class="btn btn-primary" onclick="copyToClipboard('Test content', 'Global toast triggered!')">
                         <i class="bi bi-clipboard me-2"></i> Trigger Toast / Copy
+                    </button>
+
+                    <h3 class="h5 mt-4 mb-3 text-white">Confirmation Dialog</h3>
+                    <p class="small text-secondary mb-3">Use the standard `window.confirm` for destructive actions or overwriting data, such as the "Load Sample" functionality when an input area is not empty.</p>
+                    <button class="btn btn-outline-warning" onclick="window.confirm('This will overwrite your current input. Do you want to continue?')">
+                        <i class="bi bi-exclamation-triangle me-2"></i> Trigger Confirm Dialog
                     </button>
                 </div>
             </section>
@@ -142,6 +157,88 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showToast(message = 'Copied to clipboard!') {
+            let toastContainer = document.querySelector('.toast-container');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+                document.body.appendChild(toastContainer);
+            }
+
+            let toastEl = document.getElementById('globalToast');
+            if (!toastEl) {
+                toastEl = document.createElement('div');
+                toastEl.id = 'globalToast';
+                toastEl.className = 'toast align-items-center text-white bg-success border-0';
+                toastEl.setAttribute('role', 'alert');
+                toastEl.setAttribute('aria-live', 'assertive');
+                toastEl.setAttribute('aria-atomic', 'true');
+
+                toastEl.innerHTML = `
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <i class="bi bi-check-circle me-2"></i> <span id="toastMessage"></span>
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                `;
+                toastContainer.appendChild(toastEl);
+            }
+
+            document.getElementById('toastMessage').innerText = message;
+
+            if (typeof bootstrap !== 'undefined' && bootstrap.Toast) {
+                const toast = new bootstrap.Toast(toastEl);
+                toast.show();
+            } else {
+                toastEl.classList.add('show');
+                setTimeout(() => {
+                    toastEl.classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        function copyToClipboard(text, successMessage = 'Copied to clipboard!') {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast(successMessage);
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                    fallbackCopyTextToClipboard(text, successMessage);
+                });
+            } else {
+                fallbackCopyTextToClipboard(text, successMessage);
+            }
+        }
+
+        function fallbackCopyTextToClipboard(text, successMessage) {
+            var textArea = document.createElement("textarea");
+            textArea.value = text;
+
+            // Avoid scrolling to bottom
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                var successful = document.execCommand('copy');
+                if (successful) {
+                    showToast(successMessage);
+                } else {
+                    console.error('Fallback: Copying text command was unsuccessful');
+                }
+            } catch (err) {
+                console.error('Fallback: Oops, unable to copy', err);
+            }
+
+            document.body.removeChild(textArea);
+        }
+    </script>
 </body>
 
 </html>

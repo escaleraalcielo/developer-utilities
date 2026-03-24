@@ -231,3 +231,25 @@ h6 {
     border-color: var(--accent-color);
     color: white;
 }
+/* Fix for table borders overlapping the glass panel */
+.glass-panel table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.glass-panel .table-dark {
+    --bs-table-bg: transparent;
+    --bs-table-striped-bg: rgba(255, 255, 255, 0.02);
+    --bs-table-hover-bg: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.glass-panel table td,
+.glass-panel table th {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Remove border from the last row to prevent overflow */
+.glass-panel table tr:last-child td {
+    border-bottom: none;
+}
