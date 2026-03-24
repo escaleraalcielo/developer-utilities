@@ -58,15 +58,8 @@ if (typeof document !== 'undefined') {
             if (!result) return;
 
             // 1. Copy to Clipboard
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(result).then(() => {
-                    statusTextEl.textContent = 'Copied and Saved to History.';
-                }).catch(err => {
-                    statusTextEl.textContent = 'Copy failed, but saved to history.';
-                });
-            } else {
-                 statusTextEl.textContent = 'Clipboard not available, but saved to history.';
-            }
+            window.copyToClipboard(result, 'Copied and Saved to History.');
+            statusTextEl.textContent = 'Copied and Saved to History.';
 
             // 2. Add to History
             const items = result.split('\n');
@@ -92,9 +85,7 @@ if (typeof document !== 'undefined') {
         window.copyHistoryItem = (id) => {
             const item = sessionHistory.find(i => i.id === id);
             if (item) {
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(item.result);
-                }
+                window.copyToClipboard(item.result, 'Copied from history.');
                 statusTextEl.textContent = 'Copied from history.';
             }
         };
@@ -136,31 +127,9 @@ if (typeof document !== 'undefined') {
             });
         }
 
-        historyTableBody.innerHTML = '';
-        sessionHistory.forEach(item => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td class="align-middle text-secondary">${item.timestamp}</td>
-                <td class="align-middle text-info">${item.count}</td>
-                <td class="align-middle text-truncate" style="max-width: 300px;">
-                    <code class="text-light">${escapeHtml(item.preview)}</code>
-                </td>
-                <td class="align-middle text-end">
-                    <button class="btn btn-sm btn-link text-primary p-0 me-2" onclick="copyHistoryItem(${item.id})" title="Copy">
-                        <i class="bi bi-clipboard"></i>
-                    </button>
-                    <button class="btn btn-sm btn-link text-danger p-0" onclick="deleteHistoryItem(${item.id})" title="Delete">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </td>
-            `;
-            historyTableBody.appendChild(tr);
-        });
-    }
-
     function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
+        if (!text) return '';
+        return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
-});
+    });
+}

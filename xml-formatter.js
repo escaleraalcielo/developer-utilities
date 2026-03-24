@@ -152,12 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!outputEl.value) return;
 
         outputEl.select();
-        navigator.clipboard.writeText(outputEl.value).then(() => {
-            const toastEl = document.getElementById('copyToast');
-            if (toastEl && typeof bootstrap !== 'undefined') {
-                const toast = new bootstrap.Toast(toastEl);
-                toast.show();
-            }
-        });
+        window.copyToClipboard(outputEl.value, 'XML copied to clipboard!');
     });
 });
