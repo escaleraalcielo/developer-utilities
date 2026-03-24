@@ -8,6 +8,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const suffixSelect = document.getElementById('suffixSelect');
     const inputCount = document.getElementById('inputCount');
     const outputCount = document.getElementById('outputCount');
+    const loadSampleBtn = document.getElementById('loadSampleBtn');
+
+    // --- Load Sample Logic ---
+    if (loadSampleBtn) {
+        loadSampleBtn.addEventListener('click', () => {
+            if (inputLabels.value.trim() !== '') {
+                const proceed = window.confirm("This will overwrite your current input. Do you want to continue?");
+                if (!proceed) return;
+            }
+
+            inputLabels.value = window.SampleData.apiNameGenerator;
+            suffixSelect.value = '__c';
+
+            // Trigger input event to update count
+            const inputEvent = new Event('input');
+            inputLabels.dispatchEvent(inputEvent);
+
+            // Trigger generation
+            generateBtn.click();
+        });
+    }
 
     // Real-time counting
     inputLabels.addEventListener('input', () => {
