@@ -97,20 +97,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Store items for validation before quoting
-        // Optimization: since we no longer modify processedItems directly, we don't need to clone the array
-        const itemsForValidation = processedItems;
+        const itemsForValidation = [...processedItems];
 
-        // 3. Join & Apply Quotes
-        let result = '';
-        if (processedItems.length > 0) {
-            if (quoteType === 'single') {
-                result = `'${processedItems.join(`'${delim}'`)}'`;
-            } else if (quoteType === 'double') {
-                result = `"${processedItems.join(`"${delim}"`)}"`;
-            } else {
-                result = processedItems.join(delim);
-            }
+        // Apply Quotes
+        if (quoteType === 'single') {
+            processedItems = processedItems.map(item => `'${item}'`);
+        } else if (quoteType === 'double') {
+            processedItems = processedItems.map(item => `"${item}"`);
         }
+
+        // 3. Join
+        let result = processedItems.join(delim);
 
         // 4. Enclose Result
         if (processedItems.length > 0) { // Only enclose if there is content
@@ -145,52 +142,41 @@ document.addEventListener('DOMContentLoaded', () => {
         const warningMsgEl = document.getElementById('conversionWarningMsg');
         let conflicts = [];
 
-        // Performance Optimization: Consolidate multiple .some() calls into a single loop
-        const checkDelimiter = settings.delimiter && settings.delimiter !== '\n';
-        const checkSingle = settings.quoteType === 'single';
-        const checkDouble = settings.quoteType === 'double';
-        const checkParentheses = settings.encloseType === 'parentheses';
-        const checkBrackets = settings.encloseType === 'brackets';
-
-        let hasDelimiter = false;
-        let hasSingle = false;
-        let hasDouble = false;
-        let hasParentheses = false;
-        let hasBrackets = false;
-
-        for (let i = 0; i < processedItems.length; i++) {
-            const item = processedItems[i];
-            if (checkDelimiter && !hasDelimiter && item.includes(settings.delimiter)) {
-                hasDelimiter = true;
-            }
-            if (checkSingle && !hasSingle && item.includes("'")) {
-                hasSingle = true;
-            }
-            if (checkDouble && !hasDouble && item.includes('"')) {
-                hasDouble = true;
-            }
-            if (checkParentheses && !hasParentheses && (item.includes('(') || item.includes(')'))) {
-                hasParentheses = true;
-            }
-            if (checkBrackets && !hasBrackets && (item.includes('[') || item.includes(']'))) {
-                hasBrackets = true;
-            }
-
-            // Early exit if all active checks are already true
-            if ((!checkDelimiter || hasDelimiter) &&
-                (!checkSingle || hasSingle) &&
-                (!checkDouble || hasDouble) &&
-                (!checkParentheses || hasParentheses) &&
-                (!checkBrackets || hasBrackets)) {
-                break;
+        // 1. Delimiter Conflict
+        // If delimiter is present in the raw input text (and it's not a functional split, but this is a rough check)
+        // More accurately: check if the ITEMS contain the delimiter.
+        // If an item contains the delimiter, the resulting CSV will be ambiguous or broken.
+        if (settings.delimiter && settings.delimiter !== '\n') {
+            const hasDelimiter = processedItems.some(item => item.includes(settings.delimiter));
+            if (hasDelimiter) {
+                conflicts.push(`Input contains the delimiter "<strong>${escapeHtml(settings.delimiter)}</strong>"`);
             }
         }
 
-        if (hasDelimiter) conflicts.push(`Input contains the delimiter "<strong>${escapeHtml(settings.delimiter)}</strong>"`);
-        if (hasSingle) conflicts.push(`Input contains <strong>Single Quotes</strong>`);
-        if (hasDouble) conflicts.push(`Input contains <strong>Double Quotes</strong>`);
-        if (hasParentheses) conflicts.push('Input contains <strong>Parentheses</strong>');
-        if (hasBrackets) conflicts.push('Input contains <strong>Brackets</strong>');
+        // 2. Quote Conflict
+        // If wrapping with quotes, check if items contain that quote
+        if (settings.quoteType === 'single') {
+            const hasSingle = processedItems.some(item => item.includes("'"));
+            if (hasSingle) {
+                conflicts.push(`Input contains <strong>Single Quotes</strong>`);
+            }
+        } else if (settings.quoteType === 'double') {
+            const hasDouble = processedItems.some(item => item.includes('"'));
+            if (hasDouble) {
+                conflicts.push(`Input contains <strong>Double Quotes</strong>`);
+            }
+        }
+
+        // 3. Enclosure Conflict (less critical, but good to know)
+        if (settings.encloseType === 'parentheses') {
+            if (processedItems.some(item => item.includes('(') || item.includes(')'))) {
+                conflicts.push('Input contains <strong>Parentheses</strong>');
+            }
+        } else if (settings.encloseType === 'brackets') {
+            if (processedItems.some(item => item.includes('[') || item.includes(']'))) {
+                conflicts.push('Input contains <strong>Brackets</strong>');
+            }
+        }
 
         // Update UI
         if (conflicts.length > 0) {
@@ -367,6 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
             showCopyFeedback();
         } catch (err) {
             console.error('Fallback copy failed', err);
+            // alert('Could not copy automatically. Please press Ctrl+C.');
         }
     }
 

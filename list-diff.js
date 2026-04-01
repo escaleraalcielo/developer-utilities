@@ -181,6 +181,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Helpers ---
 
+    function isSalesforceId(str) {
+        // Basic check: 15 or 18 chars, alphanumeric
+        return /^[a-zA-Z0-9]{15}$|^[a-zA-Z0-9]{18}$/.test(str);
+    }
+
+    function to18CharId(id) {
+        if (id.length === 18) return id;
+        if (id.length !== 15) return id; // Should not happen if check passed, but safety
+
+        let suffix = '';
+        for (let i = 0; i < 3; i++) {
+            let flags = 0;
+            for (let j = 0; j < 5; j++) {
+                const char = id.charAt(i * 5 + j);
+                if (char >= 'A' && char <= 'Z') {
+                    flags += (1 << j);
+                }
+            }
+            suffix += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ012345'.charAt(flags);
+        }
+        return id + suffix;
+    }
+
     function escapeHtml(text) {
         if (!text) return '';
         return text

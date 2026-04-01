@@ -34,16 +34,6 @@ Bulk-generate CSV files for Salesforce Permission Set or License assignments.
 ### 5. GUID Generator
 Generate random Version 4 UUIDs with bulk generation (up to 20) and session history.
 
-### 6. Apex Debug Log Filter
-Filter massive raw Salesforce debug logs.
-* Extracts useful context like `USER_DEBUG`, `EXCEPTION`, `METHOD_ENTRY/EXIT`.
-* Includes custom keyword search over the log output.
-
-### 7. XML / package.xml Formatter
-Format and minify XML documents.
-* Auto-indent options (2 spaces, 4 spaces, or tab).
-* One-click formatting for metadata config and `package.xml` files.
-
 ## Usage
 Run the tools directly from your file system—no web server required.
 1. Download or clone the repository.
