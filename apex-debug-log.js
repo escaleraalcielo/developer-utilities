@@ -16,30 +16,88 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterCheckboxes = document.querySelectorAll('.filter-checkbox');
     const customFilterEl = document.getElementById('customFilter');
 
+    // Pagination Elements
+    const inputPagination = document.getElementById('inputPagination');
+    const loadMoreInputBtn = document.getElementById('loadMoreInputBtn');
+    const loadAllInputBtn = document.getElementById('loadAllInputBtn');
+
+    const outputPagination = document.getElementById('outputPagination');
+    const loadMoreOutputBtn = document.getElementById('loadMoreOutputBtn');
+    const loadAllOutputBtn = document.getElementById('loadAllOutputBtn');
+
+    // State Variables
     let originalFileName = '';
+    let rawLines = [];
+    let filteredLines = [];
+
+    const INITIAL_LIMIT = 20000;
+    const CHUNK_SIZE = 100000;
+
+    let inputDisplayLimit = INITIAL_LIMIT;
+    let outputDisplayLimit = INITIAL_LIMIT;
 
     // Event Listeners
-    inputEl.addEventListener('input', updateFilter);
+    inputEl.addEventListener('input', (e) => {
+        // If the textarea is readonly (truncated), we shouldn't update rawLines from it.
+        // If it's not readonly, update rawLines without calling renderInput() to avoid cursor jumping.
+        if (!inputEl.readOnly) {
+            rawLines = e.target.value.split(/\r?\n/);
+            // Do not call renderInput() here, as it resets the user's cursor position.
+            updateFilter();
+        }
+    });
     customFilterEl.addEventListener('input', updateFilter);
     filterCheckboxes.forEach(cb => cb.addEventListener('change', updateFilter));
 
+    // Pagination Listeners
+    loadMoreInputBtn.addEventListener('click', () => {
+        inputDisplayLimit += CHUNK_SIZE;
+        renderInput();
+    });
+
+    loadAllInputBtn.addEventListener('click', () => {
+        inputDisplayLimit = rawLines.length;
+        renderInput();
+    });
+
+    loadMoreOutputBtn.addEventListener('click', () => {
+        outputDisplayLimit += CHUNK_SIZE;
+        renderOutput();
+    });
+
+    loadAllOutputBtn.addEventListener('click', () => {
+        outputDisplayLimit = filteredLines.length;
+        renderOutput();
+    });
+
     // Global func for clear button
-    window.updateFilter = updateFilter;
+    window.updateFilter = () => {
+        if (!inputEl.value) {
+            rawLines = [];
+        }
+        inputDisplayLimit = INITIAL_LIMIT;
+        outputDisplayLimit = INITIAL_LIMIT;
+        renderInput();
+        updateFilter();
+    };
 
     // --- Load Sample Logic ---
     if (loadSampleBtn) {
         loadSampleBtn.addEventListener('click', () => {
-            if (inputEl.value.trim() !== '') {
+            const hasContent = rawLines.length > 0 && !(rawLines.length === 1 && rawLines[0].trim() === '');
+            if (hasContent) {
                 const proceed = window.confirm("This will overwrite your current input. Do you want to continue?");
                 if (!proceed) return;
             }
 
-            inputEl.value = window.SampleData.apexDebugLog;
+            rawLines = window.SampleData.apexDebugLog.split(/\r?\n/);
+            inputDisplayLimit = INITIAL_LIMIT;
 
             // Check default filters plus maybe SOQL
             document.getElementById('filterSoql').checked = true;
             customFilterEl.value = '';
 
+            renderInput();
             updateFilter();
         });
     }
@@ -71,7 +129,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const reader = new FileReader();
         reader.onload = (e) => {
-            inputEl.value = e.target.result;
+            rawLines = e.target.result.split(/\r?\n/);
+            inputDisplayLimit = INITIAL_LIMIT;
+            renderInput();
             updateFilter();
         };
         reader.onerror = () => {
@@ -83,15 +143,72 @@ document.addEventListener('DOMContentLoaded', () => {
         event.target.value = '';
     });
 
-    function updateFilter() {
-        const rawInput = inputEl.value;
-        const lines = rawInput.split(/\r?\n/);
+    function renderInput() {
+        if (rawLines.length === 0) {
+            inputEl.value = '';
+            inputEl.readOnly = false;
+            inputStatsEl.textContent = '0 lines';
+            inputPagination.classList.remove('d-flex');
+            inputPagination.classList.add('d-none');
+            return;
+        }
 
-        inputStatsEl.textContent = `${lines.length} lines`;
+        const linesToShow = Math.min(rawLines.length, inputDisplayLimit);
+        inputEl.value = rawLines.slice(0, linesToShow).join('\n');
 
-        if (!rawInput.trim()) {
+        const remainingLines = rawLines.length - linesToShow;
+        if (remainingLines > 0) {
+            // Make readonly when truncated to prevent data loss on edit
+            inputEl.readOnly = true;
+            inputStatsEl.textContent = `Showing ${linesToShow.toLocaleString()} of ${rawLines.length.toLocaleString()} lines (Truncated for performance - Read Only)`;
+            inputPagination.classList.remove('d-none');
+            inputPagination.classList.add('d-flex');
+
+            const nextChunk = Math.min(CHUNK_SIZE, remainingLines);
+            loadMoreInputBtn.textContent = `Load ${nextChunk.toLocaleString()} more`;
+            loadAllInputBtn.textContent = `Load remaining ${remainingLines.toLocaleString()}`;
+        } else {
+            // Restore editability when fully loaded
+            inputEl.readOnly = false;
+            inputStatsEl.textContent = `${rawLines.length.toLocaleString()} lines`;
+            inputPagination.classList.remove('d-flex');
+            inputPagination.classList.add('d-none');
+        }
+    }
+
+    function renderOutput() {
+        if (filteredLines.length === 0) {
             outputEl.value = '';
             outputStatsEl.textContent = '0 lines shown';
+            outputPagination.classList.remove('d-flex');
+            outputPagination.classList.add('d-none');
+            return;
+        }
+
+        const linesToShow = Math.min(filteredLines.length, outputDisplayLimit);
+        outputEl.value = filteredLines.slice(0, linesToShow).join('\n');
+
+        const remainingLines = filteredLines.length - linesToShow;
+        if (remainingLines > 0) {
+            outputStatsEl.textContent = `Showing ${linesToShow.toLocaleString()} of ${filteredLines.length.toLocaleString()} filtered lines (Truncated for performance)`;
+            outputPagination.classList.remove('d-none');
+            outputPagination.classList.add('d-flex');
+
+            const nextChunk = Math.min(CHUNK_SIZE, remainingLines);
+            loadMoreOutputBtn.textContent = `Load ${nextChunk.toLocaleString()} more`;
+            loadAllOutputBtn.textContent = `Load remaining ${remainingLines.toLocaleString()}`;
+        } else {
+            outputStatsEl.textContent = `${filteredLines.length.toLocaleString()} lines shown`;
+            outputPagination.classList.remove('d-flex');
+            outputPagination.classList.add('d-none');
+        }
+    }
+
+    function updateFilter() {
+        const isEmpty = rawLines.length === 0 || (rawLines.length === 1 && rawLines[0].trim() === '');
+        if (isEmpty) {
+            filteredLines = [];
+            renderOutput();
             originalFileName = '';
             return;
         }
@@ -103,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const customText = customFilterEl.value.toLowerCase().trim();
 
-        const filteredLines = lines.filter(line => {
+        filteredLines = rawLines.filter(line => {
             // Include empty lines if input is just empty? No, skip them.
             if (!line.trim()) return false;
 
@@ -137,8 +254,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return false;
         });
 
-        outputEl.value = filteredLines.join('\n');
-        outputStatsEl.textContent = `${filteredLines.length} lines shown`;
+        outputDisplayLimit = INITIAL_LIMIT;
+        renderOutput();
 
         // Disable save button if no output
         if (saveBtn) {
@@ -149,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Save Logic ---
     if (saveBtn) {
         saveBtn.addEventListener('click', () => {
-            if (!outputEl.value) return;
+            if (filteredLines.length === 0) return;
 
             let downloadName = 'filtered_debug_log.log';
             if (originalFileName) {
@@ -163,16 +280,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            downloadFile(outputEl.value, downloadName);
+            downloadFile(filteredLines.join('\n'), downloadName);
         });
     }
 
     // --- Copy Logic ---
     copyBtn.addEventListener('click', () => {
-        if (!outputEl.value) return;
+        if (filteredLines.length === 0) return;
 
         outputEl.select();
-        copyToClipboard(outputEl.value, 'Log copied to clipboard!');
+        copyToClipboard(filteredLines.join('\n'), 'Log copied to clipboard!');
     });
 });
 

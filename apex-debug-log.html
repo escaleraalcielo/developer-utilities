@@ -85,6 +85,11 @@
                     <textarea id="inputData" class="form-control glass-input flex-grow-1 p-3"
                         placeholder="Paste raw Salesforce debug log here or upload a file..."></textarea>
 
+                    <div id="inputPagination" class="d-none justify-content-center mt-2 gap-2">
+                        <button id="loadMoreInputBtn" class="btn btn-sm btn-outline-light"></button>
+                        <button id="loadAllInputBtn" class="btn btn-sm btn-outline-light"></button>
+                    </div>
+
                     <div class="d-flex justify-content-between mt-3">
                         <span class="text-secondary small" id="inputStats">0 lines</span>
                         <div>
@@ -144,6 +149,11 @@
                 <div class="glass-panel p-4 flex-grow-1 d-flex flex-column">
                     <label for="outputData" class="form-label text-secondary small fw-bold text-uppercase mb-3">Filtered Log</label>
                     <textarea id="outputData" class="form-control glass-input flex-grow-1 p-3" readonly></textarea>
+
+                    <div id="outputPagination" class="d-none justify-content-center mt-2 gap-2">
+                        <button id="loadMoreOutputBtn" class="btn btn-sm btn-outline-light"></button>
+                        <button id="loadAllOutputBtn" class="btn btn-sm btn-outline-light"></button>
+                    </div>
 
                     <div class="d-flex justify-content-between mt-3 align-items-center">
                         <span class="text-secondary small" id="outputStats">0 lines shown</span>
