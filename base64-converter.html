@@ -12,7 +12,7 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <style>
         .drag-area {
-            border: 2px dashed rgba(148, 163, 184, 0.2);
+            border: 2px dashed var(--border-color);
             transition: all 0.3s ease;
         }
 
@@ -24,7 +24,7 @@
         /* Custom Tabs */
         .nav-pills .nav-link {
             color: var(--text-secondary);
-            background: rgba(30, 41, 59, 0.4);
+            background: var(--card-bg);
             border: 1px solid var(--border-color);
             margin-right: 0.5rem;
             border-radius: 0.5rem;
@@ -32,7 +32,7 @@
 
         .nav-pills .nav-link:hover {
             color: var(--text-primary);
-            background: rgba(30, 41, 59, 0.8);
+            background: var(--panel-bg);
         }
 
         .nav-pills .nav-link.active {
