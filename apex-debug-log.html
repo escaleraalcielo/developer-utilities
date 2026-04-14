@@ -32,6 +32,8 @@
 
         textarea.glass-input {
             flex-grow: 1;
+            flex-shrink: 1;
+            min-height: 0;
             white-space: pre;
             overflow-wrap: normal;
             overflow-x: auto;
@@ -40,9 +42,12 @@
         /* Log Output Area */
         #outputData {
             flex-grow: 1;
+            flex-shrink: 1;
+            min-height: 0;
             white-space: pre;
             overflow-wrap: normal;
             overflow-x: auto;
+            overflow-y: auto;
             background: rgba(15, 23, 42, 0.6);
             border: 1px solid rgba(148, 163, 184, 0.1);
             border-radius: 0.375rem;
@@ -51,7 +56,6 @@
             font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
             font-size: 14px;
             line-height: 1.5;
-            overflow-y: auto;
         }
 
         /* Syntax Highlighting Classes */
@@ -67,7 +71,6 @@
         .font-jetbrains { font-family: 'JetBrains Mono', monospace !important; }
         .font-fira { font-family: 'Fira Code', monospace !important; }
         .font-consolas { font-family: Consolas, monospace !important; }
-        .font-courier { font-family: 'Courier New', monospace !important; }
         .font-menlo { font-family: Menlo, monospace !important; }
 
         /* Display Controls */
@@ -224,7 +227,6 @@
                                 <option value="jetbrains">JetBrains Mono</option>
                                 <option value="fira">Fira Code</option>
                                 <option value="consolas">Consolas</option>
-                                <option value="courier">Courier New</option>
                                 <option value="menlo">Menlo</option>
                             </select>
                         </div>

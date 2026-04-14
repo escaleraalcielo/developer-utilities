@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function applyFontFamily(fontFamily) {
         // Remove all font classes
-        outputEl.classList.remove('font-jetbrains', 'font-fira', 'font-consolas', 'font-courier', 'font-menlo');
+        outputEl.classList.remove('font-jetbrains', 'font-fira', 'font-consolas', 'font-menlo');
 
         // Add appropriate class
         if (fontFamily === 'jetbrains') {
@@ -153,8 +153,6 @@ document.addEventListener('DOMContentLoaded', () => {
             outputEl.classList.add('font-fira');
         } else if (fontFamily === 'consolas') {
             outputEl.classList.add('font-consolas');
-        } else if (fontFamily === 'courier') {
-            outputEl.classList.add('font-courier');
         } else if (fontFamily === 'menlo') {
             outputEl.classList.add('font-menlo');
         }
