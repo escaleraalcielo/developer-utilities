@@ -37,9 +37,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // Keyword categories for syntax highlighting
     const HIGHLIGHT_PATTERNS = {
         error: ['FATAL_ERROR', 'EXCEPTION_THROWN', 'ERROR', 'System.AssertException', 'System.DmlException', 'System.QueryException', 'System.NullPointerException', 'DUPLICATE_VALUE'],
-        flow: ['SOQL_EXECUTE_BEGIN', 'SOQL_EXECUTE_END', 'DML_BEGIN', 'DML_END', 'CODE_UNIT_STARTED', 'CODE_UNIT_FINISHED', 'CONSTRUCTOR_ENTRY', 'CONSTRUCTOR_EXIT', 'METHOD_ENTRY', 'METHOD_EXIT', 'EXECUTION_STARTED', 'EXECUTION_FINISHED'],
+        apex: ['CODE_UNIT_STARTED', 'CODE_UNIT_FINISHED', 'CONSTRUCTOR_ENTRY', 'CONSTRUCTOR_EXIT', 'METHOD_ENTRY', 'METHOD_EXIT', 'EXECUTION_STARTED', 'EXECUTION_FINISHED', 'BULK_HEAP_ALLOCATE', 'ENTERING_MANAGED_PKG', 'EMAIL_QUEUE', 'HEAP_ALLOCATE', 'HEAP_DEALLOCATE'],
         debug: ['USER_DEBUG', 'SYSTEM_DEBUG'],
-        limit: ['LIMIT_USAGE_FOR_NS', 'CUMULATIVE_LIMIT_USAGE', 'CUMULATIVE_LIMIT_USAGE_END', 'HEAP_ALLOCATE', 'VARIABLE_SCOPE_BEGIN', 'STATEMENT_EXECUTE']
+        limit: ['LIMIT_USAGE_FOR_NS', 'CUMULATIVE_LIMIT_USAGE', 'CUMULATIVE_LIMIT_USAGE_END', 'CUMULATIVE_PROFILING', 'CUMULATIVE_PROFILING_BEGIN', 'CUMULATIVE_PROFILING_END'],
+        database: ['DML_BEGIN', 'DML_END', 'SOQL_EXECUTE_BEGIN', 'SOQL_EXECUTE_END', 'SOSL_EXECUTE_BEGIN', 'SOSL_EXECUTE_END', 'IDEAS_QUERY_EXECUTE'],
+        callout: ['CALLOUT_REQUEST', 'CALLOUT_RESPONSE', 'NAMED_CREDENTIAL_REQUEST', 'NAMED_CREDENTIAL_RESPONSE', 'NAMED_CREDENTIAL_RESPONSE_DETAIL'],
+        workflow: ['FLOW_ACTIONCALL_DETAIL', 'FLOW_ASSIGNMENT_DETAIL', 'FLOW_BULK_ELEMENT_BEGIN', 'FLOW_BULK_ELEMENT_DETAIL', 'FLOW_BULK_ELEMENT_END', 'FLOW_BULK_ELEMENT_LIMIT_USAGE', 'FLOW_BULK_ELEMENT_NOT_SUPPORTED', 'FLOW_CREATE_INTERVIEW_BEGIN', 'FLOW_CREATE_INTERVIEW_END', 'FLOW_CREATE_INTERVIEW_ERROR', 'FLOW_ELEMENT_BEGIN', 'FLOW_ELEMENT_DEFERRED', 'FLOW_ELEMENT_END', 'FLOW_ELEMENT_ERROR', 'FLOW_ELEMENT_FAULT', 'FLOW_ELEMENT_LIMIT_USAGE', 'FLOW_INTERVIEW_FINISHED_LIMIT_USAGE', 'FLOW_INTERVIEW_PAUSED', 'FLOW_INTERVIEW_RESUMED', 'FLOW_LOOP_DETAIL', 'FLOW_RULE_DETAIL', 'FLOW_START_INTERVIEW_BEGIN', 'FLOW_START_INTERVIEW_END', 'FLOW_START_INTERVIEWS_BEGIN', 'FLOW_START_INTERVIEWS_END', 'FLOW_START_INTERVIEWS_ERROR', 'FLOW_START_INTERVIEW_LIMIT_USAGE', 'FLOW_START_SCHEDULED_RECORDS', 'FLOW_SUBFLOW_DETAIL', 'FLOW_VALUE_ASSIGNMENT', 'FLOW_WAIT_EVENT_RESUMING_DETAIL', 'FLOW_WAIT_EVENT_WAITING_DETAIL', 'FLOW_WAIT_RESUMING_DETAIL', 'FLOW_WAIT_WAITING_DETAIL'],
+        event: ['EVENT_SERVICE_PUB_BEGIN', 'EVENT_SERVICE_PUB_DETAIL', 'EVENT_SERVICE_PUB_END', 'EVENT_SERVICE_SUB_BEGIN', 'EVENT_SERVICE_SUB_DETAIL', 'EVENT_SERVICE_SUB_END'],
+        cursor: ['CURSOR_CREATE_BEGIN', 'CURSOR_CREATE_END', 'CURSOR_FETCH', 'CURSOR_FETCH_PAGE'],
+        profiling: ['LIMIT_USAGE_FOR_NS', 'CUMULATIVE_LIMIT_USAGE', 'CUMULATIVE_LIMIT_USAGE_END', 'CUMULATIVE_PROFILING', 'CUMULATIVE_PROFILING_BEGIN', 'CUMULATIVE_PROFILING_END'],
+        dataAccess: ['DATA_ACCESS_EVALUATION'],
+        nba: ['NBA_NODE_BEGIN', 'NBA_NODE_DETAIL', 'NBA_NODE_END', 'NBA_NODE_ERROR', 'NBA_OFFER_INVALID'],
+        variable: ['VARIABLE_SCOPE_BEGIN', 'VARIABLE_SCOPE_END'],
+        statement: ['STATEMENT_EXECUTE']
     };
 
     // Timestamp pattern: HH:MM:SS.NNN (NNNNNNN)
@@ -177,11 +187,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let highlighted = escapeHtml(line);
 
-        // Highlight timestamp at the start of line
-        const timestampMatch = line.match(TIMESTAMP_PATTERN);
+        // Highlight timestamp at the start of line (including the pipe separator)
+        const timestampMatch = line.match(/^(\d{2}:\d{2}:\d{2}\.\d{3}\s*\(\d+\))/);
         if (timestampMatch) {
-            const escapedTimestamp = escapeHtml(timestampMatch[0]);
-            highlighted = highlighted.replace(escapedTimestamp, `<span class="log-timestamp">${escapedTimestamp}</span>`);
+            const fullMatch = timestampMatch[0] + (line[timestampMatch[0].length] === '|' ? '|' : '');
+            const escapedMatch = escapeHtml(fullMatch);
+            highlighted = highlighted.replace(escapedMatch, `<span class="log-timestamp">${escapedMatch}</span>`);
         }
 
         // Highlight error keywords (check first - highest priority)
@@ -202,16 +213,106 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Highlight flow/execution keywords
-        HIGHLIGHT_PATTERNS.flow.forEach(keyword => {
+        // Highlight Apex Code events
+        HIGHLIGHT_PATTERNS.apex.forEach(keyword => {
             if (line.includes(keyword)) {
                 const escapedKeyword = escapeHtml(keyword);
                 const regex = new RegExp(escapedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-                highlighted = highlighted.replace(regex, `<span class="log-flow">${escapedKeyword}</span>`);
+                highlighted = highlighted.replace(regex, `<span class="log-apex">${escapedKeyword}</span>`);
             }
         });
 
-        // Highlight limit keywords
+        // Highlight Database events
+        HIGHLIGHT_PATTERNS.database.forEach(keyword => {
+            if (line.includes(keyword)) {
+                const escapedKeyword = escapeHtml(keyword);
+                const regex = new RegExp(escapedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                highlighted = highlighted.replace(regex, `<span class="log-database">${escapedKeyword}</span>`);
+            }
+        });
+
+        // Highlight Callout events
+        HIGHLIGHT_PATTERNS.callout.forEach(keyword => {
+            if (line.includes(keyword)) {
+                const escapedKeyword = escapeHtml(keyword);
+                const regex = new RegExp(escapedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                highlighted = highlighted.replace(regex, `<span class="log-callout">${escapedKeyword}</span>`);
+            }
+        });
+
+        // Highlight Workflow/Flow events
+        HIGHLIGHT_PATTERNS.workflow.forEach(keyword => {
+            if (line.includes(keyword)) {
+                const escapedKeyword = escapeHtml(keyword);
+                const regex = new RegExp(escapedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                highlighted = highlighted.replace(regex, `<span class="log-workflow">${escapedKeyword}</span>`);
+            }
+        });
+
+        // Highlight Event Service events
+        HIGHLIGHT_PATTERNS.event.forEach(keyword => {
+            if (line.includes(keyword)) {
+                const escapedKeyword = escapeHtml(keyword);
+                const regex = new RegExp(escapedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                highlighted = highlighted.replace(regex, `<span class="log-event">${escapedKeyword}</span>`);
+            }
+        });
+
+        // Highlight Cursor events
+        HIGHLIGHT_PATTERNS.cursor.forEach(keyword => {
+            if (line.includes(keyword)) {
+                const escapedKeyword = escapeHtml(keyword);
+                const regex = new RegExp(escapedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                highlighted = highlighted.replace(regex, `<span class="log-cursor">${escapedKeyword}</span>`);
+            }
+        });
+
+        // Highlight Profiling events
+        HIGHLIGHT_PATTERNS.profiling.forEach(keyword => {
+            if (line.includes(keyword)) {
+                const escapedKeyword = escapeHtml(keyword);
+                const regex = new RegExp(escapedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                highlighted = highlighted.replace(regex, `<span class="log-profiling">${escapedKeyword}</span>`);
+            }
+        });
+
+        // Highlight Data Access events
+        HIGHLIGHT_PATTERNS.dataAccess.forEach(keyword => {
+            if (line.includes(keyword)) {
+                const escapedKeyword = escapeHtml(keyword);
+                const regex = new RegExp(escapedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                highlighted = highlighted.replace(regex, `<span class="log-data-access">${escapedKeyword}</span>`);
+            }
+        });
+
+        // Highlight NBA events
+        HIGHLIGHT_PATTERNS.nba.forEach(keyword => {
+            if (line.includes(keyword)) {
+                const escapedKeyword = escapeHtml(keyword);
+                const regex = new RegExp(escapedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                highlighted = highlighted.replace(regex, `<span class="log-nba">${escapedKeyword}</span>`);
+            }
+        });
+
+        // Highlight Variable scope events
+        HIGHLIGHT_PATTERNS.variable.forEach(keyword => {
+            if (line.includes(keyword)) {
+                const escapedKeyword = escapeHtml(keyword);
+                const regex = new RegExp(escapedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                highlighted = highlighted.replace(regex, `<span class="log-variable">${escapedKeyword}</span>`);
+            }
+        });
+
+        // Highlight Statement execute events
+        HIGHLIGHT_PATTERNS.statement.forEach(keyword => {
+            if (line.includes(keyword)) {
+                const escapedKeyword = escapeHtml(keyword);
+                const regex = new RegExp(escapedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                highlighted = highlighted.replace(regex, `<span class="log-statement">${escapedKeyword}</span>`);
+            }
+        });
+
+        // Legacy flow pattern (for backward compatibility)
         HIGHLIGHT_PATTERNS.limit.forEach(keyword => {
             if (line.includes(keyword)) {
                 const escapedKeyword = escapeHtml(keyword);

@@ -190,6 +190,28 @@ thumb-border-radius: 4px;
 thumb-hover: #64748b;
 ```
 
+### Apex Debug Log Syntax Highlighting
+
+Event type colors for the Apex Debug Log viewer:
+
+| Class | Color | Hex | Use Case |
+|-------|-------|-----|----------|
+| `.log-error` | Red | `#ef4444` | FATAL_ERROR, EXCEPTION_THROWN |
+| `.log-apex` | Purple | `#a78bfa` | Apex Code events (METHOD_ENTRY, CODE_UNIT_STARTED, etc.) |
+| `.log-debug` | Green | `#10b981` | USER_DEBUG, SYSTEM_DEBUG |
+| `.log-callout` | Orange | `#fb923c` | Callout events (CALLOUT_REQUEST, NAMED_CREDENTIAL_*) |
+| `.log-database` | Cyan | `#22d3ee` | Database events (DML_*, SOQL_*, SOSL_*) |
+| `.log-workflow` | Sky Blue | `#38bdf8` | Workflow/Flow events (FLOW_*) |
+| `.log-profiling` | Gray | `#a1a1aa` | Profiling events (CUMULATIVE_*, LIMIT_USAGE_*) |
+| `.log-data-access` | Pink | `#e879f9` | Data Access events (DATA_ACCESS_*) |
+| `.log-nba` | Emerald | `#4ade80` | NBA events (NBA_*) |
+| `.log-event` | Rose | `#f472b6` | Event Service events (EVENT_SERVICE_*) |
+| `.log-cursor` | Teal | `#2dd4bf` | Cursor events (CURSOR_*) |
+| `.log-variable` | Yellow | `#facc15` | Variable scope events (VARIABLE_SCOPE_*) |
+| `.log-statement` | Light Green | `#6ee7b7` | Statement execution (STATEMENT_EXECUTE) |
+| `.log-timestamp` | Slate | `#94a3b8` | Timestamp prefix (HH:MM:SS.NNN (NNNNNNN)\|) |
+| `.log-limit` | Amber | `#f59e0b` | Limit usage events |
+
 ## Design Voice
 
 - Theme: Dark-first glassmorphic with layered transparency

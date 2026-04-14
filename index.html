@@ -218,8 +218,8 @@
                     </a>
                 </div>
 
-                <!-- Placeholder for future tools -->
-                <div class="col-md-6 col-lg-4">
+                <!-- Placeholder for future tools - always last -->
+                <div class="col-md-6 col-lg-4 tool-card" data-tool-id="more" draggable="false">
                     <div class="glass-panel p-4 h-100 opacity-50">
                         <div class="mb-3">
                             <i class="bi bi-code-slash text-secondary fs-1"></i>
@@ -301,19 +301,31 @@
                     const cards = getToolCards();
                     const cardMap = new Map(cards.map(card => [card.dataset.toolId, card]));
                     
-                    // Reorder cards based on saved order
+                    // Reorder cards based on saved order (skip 'more' placeholder)
                     order.forEach(toolId => {
+                        if (toolId === 'more') return; // Skip placeholder
                         const card = cardMap.get(toolId);
                         if (card) {
                             toolsGrid.appendChild(card);
                         }
                     });
                     
-                    // Append any new tools that weren't in the saved order
+                    // Move 'more' placeholder to the end
+                    const moreCard = cardMap.get('more');
+                    if (moreCard) {
+                        toolsGrid.appendChild(moreCard);
+                    }
+                    
+                    // Append any new tools that weren't in the saved order (before the placeholder)
                     cards.forEach(card => {
-                        if (!order.includes(card.dataset.toolId)) {
-                            // Insert before the placeholder (last child)
-                            toolsGrid.insertBefore(card, toolsGrid.lastElementChild);
+                        if (!order.includes(card.dataset.toolId) && card.dataset.toolId !== 'more') {
+                            // Insert before the 'more' placeholder if it exists
+                            const moreCard = cardMap.get('more');
+                            if (moreCard) {
+                                toolsGrid.insertBefore(card, moreCard);
+                            } else {
+                                toolsGrid.appendChild(card);
+                            }
                         }
                     });
                 } catch (e) {
@@ -324,7 +336,16 @@
             // Reset order
             function resetOrder() {
                 localStorage.removeItem(STORAGE_KEY);
-                location.reload();
+                // Reset DOM to original order
+                const cards = getToolCards();
+                const moreCard = cards.find(card => card.dataset.toolId === 'more');
+                const otherCards = cards.filter(card => card.dataset.toolId !== 'more');
+                
+                // Re-append cards in original DOM order (more card will be last)
+                otherCards.forEach(card => toolsGrid.appendChild(card));
+                if (moreCard) {
+                    toolsGrid.appendChild(moreCard);
+                }
             }
             
             // Drag event handlers
@@ -363,7 +384,8 @@
                 e.preventDefault();
                 this.classList.remove('drag-over');
                 
-                if (draggedCard && this !== draggedCard) {
+                // Don't allow dropping on the 'more' placeholder
+                if (draggedCard && this !== draggedCard && this.dataset.toolId !== 'more') {
                     const cards = getToolCards();
                     const draggedIndex = cards.indexOf(draggedCard);
                     const targetIndex = cards.indexOf(this);
@@ -372,6 +394,12 @@
                         this.parentNode.insertBefore(draggedCard, this.nextSibling);
                     } else {
                         this.parentNode.insertBefore(draggedCard, this);
+                    }
+                    
+                    // Ensure 'more' placeholder stays at the end
+                    const moreCard = cards.find(card => card.dataset.toolId === 'more');
+                    if (moreCard) {
+                        toolsGrid.appendChild(moreCard);
                     }
                     
                     saveOrder();
