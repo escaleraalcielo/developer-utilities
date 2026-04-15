@@ -216,6 +216,97 @@ function showToast(message = 'Copied to clipboard!') {
     }
 }
 
+function fallbackCopyTextToClipboard(text, successMessage) {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    `;
+
+    const container = document.createElement('div');
+    container.style.cssText = `
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        max-width: 500px;
+        width: 90%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    `;
+
+    const instruction = document.createElement('p');
+    instruction.textContent = 'Press Ctrl+C (Cmd+C on Mac) to copy, then close this dialog';
+    instruction.style.cssText = `
+        margin: 0 0 16px 0;
+        color: #333;
+        font-size: 14px;
+        font-weight: 500;
+    `;
+
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.cssText = `
+        width: 100%;
+        min-height: 120px;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-family: monospace;
+        font-size: 13px;
+        resize: vertical;
+        box-sizing: border-box;
+        margin-bottom: 16px;
+    `;
+    textarea.readOnly = true;
+
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = 'Close';
+    closeBtn.style.cssText = `
+        background: #0d6efd;
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        float: right;
+    `;
+
+    container.appendChild(instruction);
+    container.appendChild(textarea);
+    container.appendChild(closeBtn);
+    overlay.appendChild(container);
+    document.body.appendChild(overlay);
+
+    textarea.focus();
+    textarea.select();
+
+    const closeModal = () => {
+        document.body.removeChild(overlay);
+        showToast(successMessage);
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeModal();
+    });
+    document.addEventListener('keydown', function escHandler(e) {
+        if (e.key === 'Escape') {
+            document.removeEventListener('keydown', escHandler);
+            closeModal();
+        }
+    });
+}
+
 function copyToClipboard(text, successMessage = 'Copied to clipboard!') {
     if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard.writeText(text).then(() => {
@@ -227,31 +318,4 @@ function copyToClipboard(text, successMessage = 'Copied to clipboard!') {
     } else {
         fallbackCopyTextToClipboard(text, successMessage);
     }
-}
-
-function fallbackCopyTextToClipboard(text, successMessage) {
-    var textArea = document.createElement("textarea");
-    textArea.value = text;
-
-    // Avoid scrolling to bottom
-    textArea.style.top = "0";
-    textArea.style.left = "0";
-    textArea.style.position = "fixed";
-
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-
-    try {
-        var successful = document.execCommand('copy');
-        if (successful) {
-            showToast(successMessage);
-        } else {
-            console.error('Fallback: Copying text command was unsuccessful');
-        }
-    } catch (err) {
-        console.error('Fallback: Oops, unable to copy', err);
-    }
-
-    document.body.removeChild(textArea);
 }
