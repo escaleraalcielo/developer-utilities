@@ -1,4 +1,51 @@
-document.addEventListener('DOMContentLoaded', () => {
+// Basic regex-based XML formatter
+function formatXml(xml, indent) {
+    let formatted = '';
+    let pad = 0;
+
+    // Remove existing formatting
+    xml = xml.replace(/(>)(<)(\/*)/g, '$1\r\n$2$3');
+
+    const lines = xml.split('\r\n');
+
+    lines.forEach(function(node) {
+        let indentStr = 0;
+        if (node.match(/.+<\/\w[^>]*>$/)) {
+            indentStr = 0;
+        } else if (node.match(/^<\/\w/)) {
+            if (pad != 0) {
+                pad -= 1;
+            }
+        } else if (node.match(/^<\w[^>]*[^\/]>.*$/)) {
+            indentStr = 1;
+        } else {
+            indentStr = 0;
+        }
+
+        let padding = '';
+        for (let i = 0; i < pad; i++) {
+            padding += indent;
+        }
+
+        formatted += padding + node + '\r\n';
+        pad += indentStr;
+    });
+
+    // Trim the extra newline at the end
+    return formatted.trim();
+}
+
+function minifyXml(xml) {
+    // Remove spaces between tags, and normalize whitespace
+    return xml.replace(/\>[\r\n ]+\</g, "><").replace(/(<[^\/>]+>)\s+(<\/[^>]+>)/g, "$1$2").trim();
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { formatXml, minifyXml };
+}
+
+if (typeof document !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
     const inputEl = document.getElementById('inputData');
     const outputEl = document.getElementById('outputData');
@@ -112,48 +159,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Basic regex-based XML formatter
-    function formatXml(xml, indent) {
-        let formatted = '';
-        let pad = 0;
-
-        // Remove existing formatting
-        xml = xml.replace(/(>)(<)(\/*)/g, '$1\r\n$2$3');
-
-        const lines = xml.split('\r\n');
-
-        lines.forEach(function(node) {
-            let indentStr = 0;
-            if (node.match(/.+<\/\w[^>]*>$/)) {
-                indentStr = 0;
-            } else if (node.match(/^<\/\w/)) {
-                if (pad != 0) {
-                    pad -= 1;
-                }
-            } else if (node.match(/^<\w[^>]*[^\/]>.*$/)) {
-                indentStr = 1;
-            } else {
-                indentStr = 0;
-            }
-
-            let padding = '';
-            for (let i = 0; i < pad; i++) {
-                padding += indent;
-            }
-
-            formatted += padding + node + '\r\n';
-            pad += indentStr;
-        });
-
-        // Trim the extra newline at the end
-        return formatted.trim();
-    }
-
-    function minifyXml(xml) {
-        // Remove spaces between tags, and normalize whitespace
-        return xml.replace(/\>[\r\n ]+\</g, "><").replace(/(<[^\/>]+>)\s+(<\/[^>]+>)/g, "$1$2").trim();
-    }
-
     function showError(msg) {
         validationMessage.classList.remove('d-none');
         validationText.textContent = msg;
@@ -173,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
         copyToClipboard(outputEl.value, 'XML copied to clipboard!');
     });
 });
-
+}
 
 function showToast(message = 'Copied to clipboard!') {
     let toastContainer = document.querySelector('.toast-container');
