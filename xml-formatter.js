@@ -124,13 +124,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         lines.forEach(function(node) {
             let indentStr = 0;
-            if (node.match(/.+<\/\w[^>]*>$/)) {
+            if (/.+<\/\w[^>]*>$/.test(node)) {
                 indentStr = 0;
-            } else if (node.match(/^<\/\w/)) {
+            } else if (/^<\/\w/.test(node)) {
                 if (pad != 0) {
                     pad -= 1;
                 }
-            } else if (node.match(/^<\w[^>]*[^\/]>.*$/)) {
+            } else if (/^<\w[^>]*[^\/]>.*$/.test(node)) {
                 indentStr = 1;
             } else {
                 indentStr = 0;
