@@ -1,6 +1,7 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // DOM Elements
-    const inputFormula = document.getElementById('inputFormula');
+if (typeof document !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', () => {
+        // DOM Elements
+        const inputFormula = document.getElementById('inputFormula');
     const outputFormula = document.getElementById('outputFormula');
     const formatBtn = document.getElementById('formatBtn');
     const clearBtn = document.getElementById('clearBtn');
@@ -66,20 +67,24 @@ document.addEventListener('DOMContentLoaded', () => {
         copyBtn.disabled = true;
         saveBtn.disabled = true;
     });
+    });
+}
 
-    /**
-     * Basic Salesforce Formula Formatter
-     * - Breaks on functions
-     * - Indents based on parenthesis depth
-     * - Respects logical operators
-     */
-    function formatSalesforceFormula(formula, indentStr) {
-        // 1. Remove all existing line breaks and extra spaces
-        let clean = formula.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
+/**
+ * Basic Salesforce Formula Formatter
+ * - Breaks on functions
+ * - Indents based on parenthesis depth
+ * - Respects logical operators
+ */
+function formatSalesforceFormula(formula, indentStr) {
+    if (!formula) return '';
 
-        let result = '';
-        let indentLevel = 0;
-        let inQuotes = false;
+    // 1. Remove all existing line breaks and extra spaces
+    let clean = formula.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
+
+    let result = '';
+    let indentLevel = 0;
+    let inQuotes = false;
 
         // Function to generate indentation
         const getIndent = (level) => indentStr.repeat(Math.max(0, level));
@@ -123,8 +128,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Post-processing to clean up any empty lines or double indents
         return result.replace(/\n\s*\n/g, '\n').trim();
-    }
-});
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { formatSalesforceFormula };
+}
 
 
 
