@@ -55,6 +55,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // Timestamp pattern: HH:MM:SS.NNN (NNNNNNN)
     const TIMESTAMP_PATTERN = /^\d{2}:\d{2}:\d{2}\.\d{3}\s*\(\d+\)/;
 
+    // Master Regex for Syntax Highlighting
+    const allKeywords = [];
+    const keywordMap = new Map();
+    const categoriesOrder = ['error', 'debug', 'apex', 'database', 'callout', 'workflow', 'event', 'cursor', 'profiling', 'dataAccess', 'nba', 'variable', 'statement', 'limit'];
+
+    for (const type of categoriesOrder) {
+        if (HIGHLIGHT_PATTERNS[type]) {
+            for (const kw of HIGHLIGHT_PATTERNS[type]) {
+                if (!keywordMap.has(kw)) {
+                    allKeywords.push(kw);
+                    keywordMap.set(kw, type);
+                }
+            }
+        }
+    }
+
+    const escapedKeywords = allKeywords.map(kw => kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    const masterRegexStr = '(^\\d{2}:\\d{2}:\\d{2}\\.\\d{3}\\s*\\(\\d+\\)\\|?)|(' + escapedKeywords.join('|') + ')';
+    const MASTER_HIGHLIGHT_REGEX = new RegExp(masterRegexStr, 'g');
+
     // Event Listeners
     inputEl.addEventListener('input', updateFilter);
     customFilterEl.addEventListener('input', updateFilter);
@@ -175,158 +195,67 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Syntax Highlighting ---
     function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
+        if (!text) return '';
+        return text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
     }
 
     function highlightLine(line) {
+        const fragment = document.createDocumentFragment();
+
         if (!highlightToggle.checked) {
-            return escapeHtml(line);
+            fragment.appendChild(document.createTextNode(line));
+            return fragment;
         }
 
-        let highlighted = escapeHtml(line);
+        MASTER_HIGHLIGHT_REGEX.lastIndex = 0;
+        let lastIndex = 0;
+        let match;
 
-        // Highlight timestamp at the start of line (including the pipe separator)
-        const timestampMatch = line.match(/^(\d{2}:\d{2}:\d{2}\.\d{3}\s*\(\d+\))/);
-        if (timestampMatch) {
-            const fullMatch = timestampMatch[0] + (line[timestampMatch[0].length] === '|' ? '|' : '');
-            const escapedMatch = escapeHtml(fullMatch);
-            highlighted = highlighted.replace(escapedMatch, `<span class="log-timestamp">${escapedMatch}</span>`);
+        while ((match = MASTER_HIGHLIGHT_REGEX.exec(line)) !== null) {
+            if (match.index > lastIndex) {
+                fragment.appendChild(document.createTextNode(line.substring(lastIndex, match.index)));
+            }
+
+            const matchedText = match[0];
+            let className = '';
+
+            if (match[1]) {
+                className = 'log-timestamp';
+            } else {
+                const kw = match[2];
+                const type = keywordMap.get(kw);
+                if (type === 'dataAccess') className = 'log-data-access';
+                else className = 'log-' + type;
+            }
+
+            const span = document.createElement('span');
+            span.className = className;
+            span.textContent = matchedText;
+            fragment.appendChild(span);
+
+            lastIndex = MASTER_HIGHLIGHT_REGEX.lastIndex;
+
+            if (match[0].length === 0) {
+                MASTER_HIGHLIGHT_REGEX.lastIndex++;
+                lastIndex++;
+            }
         }
 
-        // Highlight error keywords (check first - highest priority)
-        HIGHLIGHT_PATTERNS.error.forEach(keyword => {
-            if (line.includes(keyword)) {
-                const escapedKeyword = escapeHtml(keyword);
-                const regex = new RegExp(escapedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-                highlighted = highlighted.replace(regex, `<span class="log-error">${escapedKeyword}</span>`);
-            }
-        });
+        if (lastIndex < line.length) {
+            fragment.appendChild(document.createTextNode(line.substring(lastIndex)));
+        }
 
-        // Highlight debug keywords
-        HIGHLIGHT_PATTERNS.debug.forEach(keyword => {
-            if (line.includes(keyword)) {
-                const escapedKeyword = escapeHtml(keyword);
-                const regex = new RegExp(escapedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-                highlighted = highlighted.replace(regex, `<span class="log-debug">${escapedKeyword}</span>`);
-            }
-        });
-
-        // Highlight Apex Code events
-        HIGHLIGHT_PATTERNS.apex.forEach(keyword => {
-            if (line.includes(keyword)) {
-                const escapedKeyword = escapeHtml(keyword);
-                const regex = new RegExp(escapedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-                highlighted = highlighted.replace(regex, `<span class="log-apex">${escapedKeyword}</span>`);
-            }
-        });
-
-        // Highlight Database events
-        HIGHLIGHT_PATTERNS.database.forEach(keyword => {
-            if (line.includes(keyword)) {
-                const escapedKeyword = escapeHtml(keyword);
-                const regex = new RegExp(escapedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-                highlighted = highlighted.replace(regex, `<span class="log-database">${escapedKeyword}</span>`);
-            }
-        });
-
-        // Highlight Callout events
-        HIGHLIGHT_PATTERNS.callout.forEach(keyword => {
-            if (line.includes(keyword)) {
-                const escapedKeyword = escapeHtml(keyword);
-                const regex = new RegExp(escapedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-                highlighted = highlighted.replace(regex, `<span class="log-callout">${escapedKeyword}</span>`);
-            }
-        });
-
-        // Highlight Workflow/Flow events
-        HIGHLIGHT_PATTERNS.workflow.forEach(keyword => {
-            if (line.includes(keyword)) {
-                const escapedKeyword = escapeHtml(keyword);
-                const regex = new RegExp(escapedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-                highlighted = highlighted.replace(regex, `<span class="log-workflow">${escapedKeyword}</span>`);
-            }
-        });
-
-        // Highlight Event Service events
-        HIGHLIGHT_PATTERNS.event.forEach(keyword => {
-            if (line.includes(keyword)) {
-                const escapedKeyword = escapeHtml(keyword);
-                const regex = new RegExp(escapedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-                highlighted = highlighted.replace(regex, `<span class="log-event">${escapedKeyword}</span>`);
-            }
-        });
-
-        // Highlight Cursor events
-        HIGHLIGHT_PATTERNS.cursor.forEach(keyword => {
-            if (line.includes(keyword)) {
-                const escapedKeyword = escapeHtml(keyword);
-                const regex = new RegExp(escapedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-                highlighted = highlighted.replace(regex, `<span class="log-cursor">${escapedKeyword}</span>`);
-            }
-        });
-
-        // Highlight Profiling events
-        HIGHLIGHT_PATTERNS.profiling.forEach(keyword => {
-            if (line.includes(keyword)) {
-                const escapedKeyword = escapeHtml(keyword);
-                const regex = new RegExp(escapedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-                highlighted = highlighted.replace(regex, `<span class="log-profiling">${escapedKeyword}</span>`);
-            }
-        });
-
-        // Highlight Data Access events
-        HIGHLIGHT_PATTERNS.dataAccess.forEach(keyword => {
-            if (line.includes(keyword)) {
-                const escapedKeyword = escapeHtml(keyword);
-                const regex = new RegExp(escapedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-                highlighted = highlighted.replace(regex, `<span class="log-data-access">${escapedKeyword}</span>`);
-            }
-        });
-
-        // Highlight NBA events
-        HIGHLIGHT_PATTERNS.nba.forEach(keyword => {
-            if (line.includes(keyword)) {
-                const escapedKeyword = escapeHtml(keyword);
-                const regex = new RegExp(escapedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-                highlighted = highlighted.replace(regex, `<span class="log-nba">${escapedKeyword}</span>`);
-            }
-        });
-
-        // Highlight Variable scope events
-        HIGHLIGHT_PATTERNS.variable.forEach(keyword => {
-            if (line.includes(keyword)) {
-                const escapedKeyword = escapeHtml(keyword);
-                const regex = new RegExp(escapedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-                highlighted = highlighted.replace(regex, `<span class="log-variable">${escapedKeyword}</span>`);
-            }
-        });
-
-        // Highlight Statement execute events
-        HIGHLIGHT_PATTERNS.statement.forEach(keyword => {
-            if (line.includes(keyword)) {
-                const escapedKeyword = escapeHtml(keyword);
-                const regex = new RegExp(escapedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-                highlighted = highlighted.replace(regex, `<span class="log-statement">${escapedKeyword}</span>`);
-            }
-        });
-
-        // Legacy flow pattern (for backward compatibility)
-        HIGHLIGHT_PATTERNS.limit.forEach(keyword => {
-            if (line.includes(keyword)) {
-                const escapedKeyword = escapeHtml(keyword);
-                const regex = new RegExp(escapedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-                highlighted = highlighted.replace(regex, `<span class="log-limit">${escapedKeyword}</span>`);
-            }
-        });
-
-        return highlighted;
+        return fragment;
     }
 
     function renderOutput(lines) {
         if (lines.length === 0) {
-            outputEl.innerHTML = '';
+            outputEl.textContent = '';
             rawFilteredText = '';
             return;
         }
@@ -334,13 +263,18 @@ document.addEventListener('DOMContentLoaded', () => {
         // Store raw text for copy operations
         rawFilteredText = lines.join('\n');
 
-        // Build HTML with highlighting
-        const html = lines.map(line => {
-            const highlighted = highlightLine(line);
-            return `<span class="log-line">${highlighted}</span>`;
-        }).join('');
+        // Build HTML with highlighting safely
+        const fragment = document.createDocumentFragment();
 
-        outputEl.innerHTML = html;
+        lines.forEach(line => {
+            const span = document.createElement('span');
+            span.className = 'log-line';
+            span.appendChild(highlightLine(line));
+            fragment.appendChild(span);
+        });
+
+        outputEl.textContent = '';
+        outputEl.appendChild(fragment);
     }
 
     // --- Load Sample Logic ---
