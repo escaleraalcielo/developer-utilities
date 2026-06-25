@@ -68,6 +68,16 @@ It can handle multiple lines and symbols! @#$%^&*()`,
         // SHA-256 of "Hello, SHA-256!" -> computed reference
         text: 'Hello, SHA-256!',
         expectedHash: 'd0e8b8f11c98f369016eb2ed3c541e1f01382f9d5b3104c9ffd06b6175a46271'
+    },
+
+    hmacSha256: {
+        key: 'whsec_dev_utils_demo_secret_2026',
+        message: '{"event":"order.created","id":12345,"amount":9900}'
+    },
+
+    hmacSha256Verify: {
+        // HMAC-SHA256 of the message above with the key above (computed locally for the sample).
+        expectedSignature: 'caa236a51aa64bd3f99aa9170e4799f67e516f635059de12c9ebaf8d7819aaf9'
     }
 };
 

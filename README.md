@@ -50,6 +50,13 @@ Compute SHA-256 digests of text or files entirely in the browser.
 * **File hashing**: drag-and-drop up to 5MB to get a checksum.
 * **Verify**: paste a known hash + text to confirm a match (the practical alternative to "decoding", since SHA-256 is one-way and cannot be reversed).
 
+### 9. HMAC-SHA256
+Keyed-hash message authentication code using a shared secret.
+* **Sign text or files** with a shared secret key (UTF-8 or Hex encoded).
+* **Output formats**: lowercase Hex, uppercase HEX, or Base64.
+* **Verify**: paste a known signature + message + secret to confirm a match. Comparison uses constant-time equality to avoid timing leaks.
+* **Use cases**: webhook signing (Stripe, GitHub, Slack), Salesforce Connected App JWT, signed outbound messages.
+
 ## Usage
 Run the tools directly from your file system—no web server required.
 1. Download or clone the repository.
