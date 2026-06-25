@@ -60,7 +60,15 @@ It can handle multiple lines and symbols! @#$%^&*()`,
 
     apiNameGenerator: `First Name\nLast Name\nAnnual Revenue (%)\nIs Active?\n123 Street Address\nA very long field name that exceeds the forty character limit by quite a lot`,
 
-    formulaFormatter: `IF(ISPICKVAL(StageName, 'Closed Won'), Amount * 0.1, IF(ISPICKVAL(StageName, 'Negotiation'), Amount * 0.05, 0))`
+    formulaFormatter: `IF(ISPICKVAL(StageName, 'Closed Won'), Amount * 0.1, IF(ISPICKVAL(StageName, 'Negotiation'), Amount * 0.05, 0))`,
+
+    sha256Hash: `Hash me with SHA-256 and try the Verify tab against the same text.`,
+
+    sha256Verify: {
+        // SHA-256 of "Hello, SHA-256!" -> computed reference
+        text: 'Hello, SHA-256!',
+        expectedHash: 'd0e8b8f11c98f369016eb2ed3c541e1f01382f9d5b3104c9ffd06b6175a46271'
+    }
 };
 
 if (typeof module !== 'undefined' && module.exports) {

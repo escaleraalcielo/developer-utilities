@@ -44,6 +44,12 @@ Format and minify XML documents.
 * Auto-indent options (2 spaces, 4 spaces, or tab).
 * One-click formatting for metadata config and `package.xml` files.
 
+### 8. SHA256 Hash
+Compute SHA-256 digests of text or files entirely in the browser.
+* **Output formats**: lowercase Hex, uppercase HEX, or Base64.
+* **File hashing**: drag-and-drop up to 5MB to get a checksum.
+* **Verify**: paste a known hash + text to confirm a match (the practical alternative to "decoding", since SHA-256 is one-way and cannot be reversed).
+
 ## Usage
 Run the tools directly from your file system—no web server required.
 1. Download or clone the repository.
