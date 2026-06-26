@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SObject ID Decoder | Dev Utils</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        .ids-input {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            white-space: pre;
+        }
+    </style>
+</head>
+<body class="app-mode">
+
+    <!-- Global Navigation -->
+    <div class="global-nav">
+        <a href="index.html" class="btn global-nav-btn" title="Return to Home" aria-label="Return to Home">
+            <i class="bi bi-house-door fs-4"></i>
+        </a>
+    </div>
+
+    <div class="container-fluid tool-container py-4">
+        <!-- Header / Nav -->
+        <div class="row mb-4 align-items-center">
+            <div class="col-auto">
+                <a href="index.html" class="btn btn-outline-light btn-sm rounded-circle p-2" aria-label="Return to Home">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+            </div>
+            <div class="col">
+                <h1 class="h4 mb-0 fw-bold">SObject ID Decoder</h1>
+                <p class="text-secondary small mb-0 mt-1">Decode a Salesforce record ID to its 3-char prefix and likely SObject. Supports 15 and 18-char IDs, bulk decode.</p>
+            </div>
+        </div>
+
+        <!-- Input Panel -->
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="glass-panel p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <label for="inputIds" class="form-label text-secondary small text-uppercase fw-bold mb-0">Paste Salesforce IDs</label>
+                        <div class="d-flex gap-2">
+                            <button id="loadSampleBtn" class="btn btn-sm btn-outline-light text-secondary border-0" title="Load Sample" aria-label="Load Sample">
+                                <i class="bi bi-file-earmark-text"></i> <span class="d-none d-md-inline ms-1">Sample</span>
+                            </button>
+                            <button id="clearBtn" class="btn btn-sm btn-outline-light text-secondary border-0" title="Clear" aria-label="Clear">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <textarea id="inputIds" class="form-control glass-input ids-input" rows="4"
+                        placeholder="Paste one or more Salesforce IDs (separated by newline, space, comma, or semicolon)&#10;&#10;e.g.&#10;0015500000Wv25U&#10;0035500000Wv25U&#10;5005500000Wv25U"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Output Section -->
+        <div id="outputSection" class="row g-4 d-none">
+            <div class="col-12">
+                <div class="glass-panel p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <span id="outputSummary" class="text-secondary small"></span>
+                        <button id="copyBtn" class="btn btn-sm btn-outline-success" title="Copy as TSV">
+                            <i class="bi bi-clipboard me-1"></i> Copy TSV
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover mb-0 bg-transparent">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th style="width: 110px;">Type</th>
+                                    <th style="width: 90px;">Prefix</th>
+                                    <th>SObject</th>
+                                    <th style="width: 160px;">Format</th>
+                                </tr>
+                            </thead>
+                            <tbody id="outputTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info footer -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="glass-panel p-3">
+                    <div class="d-flex align-items-start gap-3">
+                        <i class="bi bi-info-circle text-info fs-5"></i>
+                        <div class="text-secondary small">
+                            Salesforce record IDs are made of a <strong>3-character object prefix</strong> + 12 chars of org/record data (+ optional 3-char case-safe checksum for 18-char IDs).
+                            Per-org <strong>custom object prefixes</strong> (typically starting with <code>a</code> or <code>e</code>) are detected heuristically &mdash; to get the exact SObject name for a custom prefix, query <code>SELECT KeyPrefix, SObjectType FROM EntityDefinition</code> in your org.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="sample-data.js"></script>
+    <script src="sobject-id-decoder.js"></script>
+</body>
+</html>

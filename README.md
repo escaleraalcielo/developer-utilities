@@ -57,6 +57,43 @@ Keyed-hash message authentication code using a shared secret.
 * **Verify**: paste a known signature + message + secret to confirm a match. Comparison uses constant-time equality to avoid timing leaks.
 * **Use cases**: webhook signing (Stripe, GitHub, Slack), Salesforce Connected App JWT, signed outbound messages.
 
+### 10. JSON Formatter / Validator / Minifier
+Pretty-print, validate, or strip JSON down to its essentials.
+* **Format** with 2-space, 4-space, or tab indent.
+* **Minify** to a single line for transport / storage.
+* **Validate** without transforming — errors include the offending line and column.
+* **Strictly offline**: no JSON leaves your browser.
+
+### 11. Hash Identifier
+Identify an unknown hash string by format and length.
+* Detects **MD5 / SHA family / RIPEMD / Tiger / Whirlpool** in Hex or Base64.
+* Detects **password hash formats**: bcrypt, Argon2 (i/d/id), scrypt, PBKDF2 (passlib), md5crypt, sha256crypt, sha512crypt, phpass, Yescrypt, MySQL (3.x and 4.x).
+* Detects **JWT** by its three-segment base64url structure.
+* Each candidate is rated **high / medium / low** confidence with a one-line explanation.
+
+### 12. SObject ID Decoder
+Decode a Salesforce record ID to its SObject type.
+* Supports **15-char (case-sensitive)** and **18-char (case-safe)** IDs.
+* **60+ standard SF prefixes** mapped to their default SObject (Account, Contact, Opportunity, Case, Lead, User, custom objects, etc.).
+* **Bulk decode**: paste many IDs (newline / comma / space separated) and get a table view.
+* Custom object prefixes (starting with `a` or `e`) are flagged as "Custom SObject" since the actual name is per-org.
+
+### 13. SOQL Formatter / Validator
+Pretty-print Salesforce SOQL queries for readability.
+* **Uppercases keywords** (SELECT, FROM, WHERE, AND, OR, INCLUDES, …) while preserving field names and string literals.
+* **Line breaks before major clauses** (FROM, WHERE, ORDER BY, GROUP BY, HAVING, LIMIT, …).
+* **Subquery-aware** — subquery SELECT lists get extra indent.
+* **TYPEOF / WHEN / THEN / ELSE / END** supported for polymorphic SOQL.
+* **Validates** SELECT/FROM presence, balanced parens, balanced single quotes (with `''` escape).
+* **No SF connection required** — pure string transformation.
+
+### 14. Salesforce Date / DateTime Converter
+Convert between formats and timezones for SF datetime values.
+* **Parses** ISO 8601, Salesforce DateTime literals (`YYYY-MM-DD HH:MM:SS`), date-only, and Unix epoch (seconds or milliseconds).
+* **Outputs** Salesforce Date, SF DateTime UTC, ISO 8601, Unix ms, Unix seconds, and localized string — all in your selected target timezone.
+* **TZ-aware**: pick from 20+ IANA timezones (or auto-detect local). Handles DST correctly via `Intl.DateTimeFormat`.
+* **Bulk mode**: paste a column of timestamps (one per line), get a formatted table.
+
 ## Usage
 Run the tools directly from your file system—no web server required.
 1. Download or clone the repository.

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hash Identifier | Dev Utils</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        .hash-input {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            white-space: pre;
+            word-break: break-all;
+        }
+        .hash-output {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            font-size: 0.85rem;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body class="app-mode">
+
+    <!-- Global Navigation -->
+    <div class="global-nav">
+        <a href="index.html" class="btn global-nav-btn" title="Return to Home" aria-label="Return to Home">
+            <i class="bi bi-house-door fs-4"></i>
+        </a>
+    </div>
+
+    <div class="container-fluid tool-container py-4">
+        <!-- Header / Nav -->
+        <div class="row mb-4 align-items-center">
+            <div class="col-auto">
+                <a href="index.html" class="btn btn-outline-light btn-sm rounded-circle p-2" aria-label="Return to Home">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+            </div>
+            <div class="col">
+                <h1 class="h4 mb-0 fw-bold">Hash Identifier</h1>
+                <p class="text-secondary small mb-0 mt-1">Identify unknown hash strings. Supports MD5, SHA family, bcrypt, Argon2, JWT, and more.</p>
+            </div>
+        </div>
+
+        <!-- Main Workspace -->
+        <main class="row g-4 flex-grow-1 min-h-0">
+            <!-- Left Panel: Input -->
+            <div class="col-lg-5 d-flex flex-column h-100">
+                <div class="glass-panel p-4 d-flex flex-column h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <label for="inputHash" class="form-label text-secondary small text-uppercase fw-bold mb-0">Paste a hash</label>
+                        <div class="d-flex gap-2">
+                            <button id="loadSampleBtn" class="btn btn-sm btn-outline-light text-secondary border-0" title="Cycle samples" aria-label="Load Sample">
+                                <i class="bi bi-file-earmark-text"></i> <span class="d-none d-md-inline ms-1">Sample</span>
+                            </button>
+                            <button id="clearBtn" class="btn btn-sm btn-outline-light text-secondary border-0" title="Clear" aria-label="Clear">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <textarea id="inputHash" class="form-control glass-input hash-input flex-grow-1 p-3"
+                        placeholder="Paste hex, Base64, JWT, or prefixed hash here...&#10;&#10;Examples:&#10;  d0e8b8f11c98f369016eb2ed3c541e1f01382f9d5b3104c9ffd06b6175a46271&#10;  $2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy&#10;  eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIn0.signature"></textarea>
+                </div>
+            </div>
+
+            <!-- Middle Arrow -->
+            <div class="col-lg-1 d-none d-lg-flex flex-column justify-content-center align-items-center text-secondary">
+                <i class="bi bi-arrow-right fs-1"></i>
+            </div>
+
+            <!-- Right Panel: Results -->
+            <div class="col-lg-6 d-flex flex-column h-100">
+                <div class="glass-panel p-4 d-flex flex-column h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <label class="form-label text-secondary small text-uppercase fw-bold mb-0">Detection</label>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <span id="formatBadge" class="badge d-none"></span>
+                            <span id="lengthBadge" class="badge d-none"></span>
+                            <span id="normalizedBadge" class="badge d-none"></span>
+                            <button id="copyNormalizedBtn" class="btn btn-sm btn-outline-light text-secondary border-0 d-none" title="Copy normalized form">
+                                <i class="bi bi-clipboard"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="bestMatch" class="mb-3"></div>
+
+                    <div id="othersList" class="overflow-auto"></div>
+
+                    <div id="unknownMessage" class="alert alert-warning d-none mb-0 mt-3" role="alert">
+                        <i class="bi bi-question-circle me-2"></i><span></span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer note -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="glass-panel p-3">
+                    <div class="d-flex align-items-start gap-3">
+                        <i class="bi bi-info-circle text-info fs-5"></i>
+                        <div class="text-secondary small">
+                            Hash identification is <strong>heuristic</strong>. Multiple algorithms share the same output length (e.g. MD5 and NTLM are both 128-bit / 32 hex chars). Confidence levels reflect how unique the signature is:
+                            <span class="badge bg-success ms-1">high</span>
+                            <span class="badge bg-warning text-dark ms-1">medium</span>
+                            <span class="badge bg-secondary ms-1">low</span>
+                            <br>All processing happens locally in your browser. No hashes are sent anywhere.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="sample-data.js"></script>
+    <script src="hash-identifier.js"></script>
+</body>
+</html>

@@ -49,6 +49,7 @@ body {
     .tool-container {
         height: 100vh;
         min-height: auto;
+        overflow-y: auto;
     }
 
     .desktop-h-100 {
