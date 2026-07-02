@@ -15,19 +15,10 @@
     <style>
         /* Mobile overrides */
         @media (max-width: 991.98px) {
-            .glass-panel {
-                margin-bottom: 1rem;
-            }
-
             #inputData,
             #outputData {
                 min-height: 200px;
             }
-        }
-
-        .glass-panel {
-            display: flex;
-            flex-direction: column;
         }
 
         textarea.glass-input {
@@ -145,14 +136,9 @@
         </a>
     </div>
 
-    <div class="container-fluid tool-container" style="display:flex; flex-direction:column; height:100vh; overflow:hidden; padding-top:1rem; padding-bottom:1rem;">
+    <div class="container-fluid tool-container py-4">
         <!-- Header / Nav -->
         <div class="row mb-3 align-items-center" style="flex-shrink:0;">
-            <div class="col-auto">
-                <a href="index.html" class="btn btn-outline-light btn-sm rounded-circle p-2" aria-label="Return to Home">
-                    <i class="bi bi-arrow-left"></i>
-                </a>
-            </div>
             <div class="col">
                 <h1 class="h4 mb-0 fw-bold">Apex Debug Log Filter</h1>
             </div>
@@ -219,8 +205,8 @@
                         </div>
                         <hr class="border-secondary opacity-25 my-3">
                         <div class="form-group mb-2">
-                            <label for="customFilter" class="form-label small text-secondary mb-1">Custom Filter (Contains)</label>
-                            <input type="text" id="customFilter" class="form-control form-control-sm bg-dark text-light border-secondary" placeholder="e.g. Account">
+                            <label for="customFilter" class="form-label text-secondary small fw-bold text-uppercase mb-2">Custom Filter (Contains)</label>
+                            <input type="text" id="customFilter" class="form-control form-control-sm glass-input" placeholder="e.g. Account">
                         </div>
                     </div>
 
@@ -234,7 +220,7 @@
 
                         <!-- Font Family -->
                         <div class="mb-2">
-                            <label for="fontFamily" class="form-label text-secondary">Font Family</label>
+                            <label for="fontFamily" class="form-label text-secondary small fw-bold text-uppercase mb-2">Font Family</label>
                             <select id="fontFamily" class="form-select form-select-sm">
                                 <option value="system">System Default</option>
                                 <option value="jetbrains">JetBrains Mono</option>
@@ -246,7 +232,7 @@
 
                         <!-- Font Size -->
                         <div class="mb-2">
-                            <label for="fontSize" class="form-label text-secondary">Font Size: <span id="fontSizeValue">14</span>px</label>
+                            <label for="fontSize" class="form-label text-secondary small fw-bold text-uppercase mb-2">Font Size: <span id="fontSizeValue">14</span>px</label>
                             <input type="range" id="fontSize" class="form-range" min="10" max="20" value="14">
                         </div>
 
@@ -272,8 +258,8 @@
                             <button id="saveBtn" class="btn btn-success btn-sm px-4 me-2">
                                 <i class="bi bi-download"></i> Save
                             </button>
-                            <button id="copyBtn" class="btn btn-primary btn-sm px-4">
-                                <i class="bi bi-clipboard"></i> Copy
+                            <button id="copyBtn" class="btn btn-primary btn-sm">
+                                <i class="bi bi-clipboard me-1"></i> Copy
                             </button>
                         </div>
                     </div>

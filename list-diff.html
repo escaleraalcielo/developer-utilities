@@ -13,10 +13,6 @@
     <style>
         /* Mobile overrides */
         @media (max-width: 991.98px) {
-            .glass-panel {
-                margin-bottom: 1rem;
-            }
-
             #inputA,
             #inputB {
                 min-height: 200px;
@@ -25,11 +21,6 @@
             .result-list {
                 min-height: 150px;
             }
-        }
-
-        .glass-panel {
-            display: flex;
-            flex-direction: column;
         }
 
         textarea.glass-input {
@@ -72,7 +63,6 @@
 
 <body class="app-mode">
     <!-- Global Navigation -->
-    <!-- Global Navigation -->
     <div class="global-nav">
         <a href="index.html" class="btn global-nav-btn" title="Return to Home" aria-label="Return to Home">
             <i class="bi bi-house-door fs-4"></i>
@@ -82,13 +72,8 @@
     <div class="container-fluid tool-container py-4">
         <!-- Header / Nav -->
         <div class="row mb-3 align-items-center">
-            <div class="col-auto">
-                <a href="index.html" class="btn btn-outline-light btn-sm rounded-circle p-2" aria-label="Return to Home">
-                    <i class="bi bi-arrow-left"></i>
-                </a>
-            </div>
             <div class="col">
-                <h1 class="h5 mb-0 fw-bold">List Difference Tool</h1>
+                <h1 class="h4 mb-0 fw-bold">List Difference</h1>
             </div>
             <div class="col-auto">
                 <!-- Clear Button moved to controls -->
@@ -196,7 +181,7 @@
                         <div class="glass-panel p-2 flex-grow-1 d-flex flex-column h-100 overflow-hidden">
                             <div class="d-flex justify-content-between align-items-center mb-2 px-1">
                                 <span class="text-info small fw-bold">Only in A</span>
-                                <button class="btn btn-primary btn-sm px-3" onclick="copyResult('onlyA')"
+                                <button class="btn btn-primary btn-sm" onclick="copyResult('onlyA')"
                                     title="Copy Only in A">
                                     <i class="bi bi-clipboard me-1"></i> Copy
                                 </button>
@@ -215,7 +200,7 @@
                         <div class="glass-panel p-2 flex-grow-1 d-flex flex-column h-100 overflow-hidden">
                             <div class="d-flex justify-content-between align-items-center mb-2 px-1">
                                 <span class="text-success small fw-bold">Common</span>
-                                <button class="btn btn-primary btn-sm px-3" onclick="copyResult('common')"
+                                <button class="btn btn-primary btn-sm" onclick="copyResult('common')"
                                     title="Copy Common">
                                     <i class="bi bi-clipboard me-1"></i> Copy
                                 </button>
@@ -234,7 +219,7 @@
                         <div class="glass-panel p-2 flex-grow-1 d-flex flex-column h-100 overflow-hidden">
                             <div class="d-flex justify-content-between align-items-center mb-2 px-1">
                                 <span class="text-warning small fw-bold">Only in B</span>
-                                <button class="btn btn-primary btn-sm px-3" onclick="copyResult('onlyB')"
+                                <button class="btn btn-primary btn-sm" onclick="copyResult('onlyB')"
                                     title="Copy Only in B">
                                     <i class="bi bi-clipboard me-1"></i> Copy
                                 </button>

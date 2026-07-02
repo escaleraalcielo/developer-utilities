@@ -35,11 +35,6 @@
     <div class="container-fluid tool-container py-4">
         <!-- Header / Nav -->
         <div class="row mb-4 align-items-center">
-            <div class="col-auto">
-                <a href="index.html" class="btn btn-outline-light btn-sm rounded-circle p-2" aria-label="Return to Home">
-                    <i class="bi bi-arrow-left"></i>
-                </a>
-            </div>
             <div class="col">
                 <h1 class="h4 mb-0 fw-bold">JSON Formatter / Validator / Minifier</h1>
                 <p class="text-secondary small mb-0 mt-1">Pretty-print, validate, or minify JSON. Validation errors report the exact line &amp; column.</p>
@@ -66,14 +61,14 @@
                         </div>
                         <div class="col-md-3">
                             <label for="indentSelect" class="form-label text-secondary small fw-bold text-uppercase mb-2">Indent (Format)</label>
-                            <select id="indentSelect" class="form-select bg-dark border-secondary text-white">
+                            <select id="indentSelect" class="form-select">
                                 <option value="2" selected>2 Spaces</option>
                                 <option value="4">4 Spaces</option>
                                 <option value="tab">Tab</option>
                             </select>
                         </div>
                         <div class="col-md-2">
-                            <button id="clearBtn" class="btn btn-outline-light w-100">
+                            <button id="clearBtn" class="btn btn-outline-light btn-sm text-secondary border-0">
                                 <i class="bi bi-trash me-1"></i> Clear
                             </button>
                         </div>
@@ -91,7 +86,7 @@
             <div class="col-lg-6 d-flex flex-column h-100">
                 <div class="glass-panel p-4 d-flex flex-column h-100">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <label for="inputJson" class="form-label text-secondary small text-uppercase fw-bold mb-0">Input JSON</label>
+                        <label for="inputJson" class="form-label text-secondary small fw-bold text-uppercase mb-2">Input JSON</label>
                         <div class="d-flex gap-2">
                             <button id="loadSampleBtn" class="btn btn-sm btn-outline-light text-secondary border-0" title="Load Sample" aria-label="Load Sample">
                                 <i class="bi bi-file-earmark-text"></i> <span class="d-none d-md-inline ms-1">Sample</span>
@@ -107,14 +102,14 @@
             <div class="col-lg-6 d-flex flex-column h-100">
                 <div class="glass-panel p-4 d-flex flex-column h-100">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <label for="outputJson" class="form-label text-secondary small text-uppercase fw-bold mb-0">Output</label>
+                        <label for="outputJson" class="form-label text-secondary small fw-bold text-uppercase mb-2">Output</label>
                         <span id="outputStats" class="badge bg-secondary bg-opacity-10 text-secondary"></span>
                     </div>
                     <textarea id="outputJson" class="form-control glass-input json-input flex-grow-1 p-3" readonly
                         placeholder="Formatted / minified JSON will appear here..."></textarea>
                     <div class="d-flex justify-content-end mt-3">
-                        <button id="copyBtn" class="btn btn-primary" disabled>
-                            <i class="bi bi-clipboard me-1"></i> Copy Output
+                        <button id="copyBtn" class="btn btn-primary btn-sm" disabled>
+                            <i class="bi bi-clipboard me-1"></i> Copy
                         </button>
                     </div>
                 </div>

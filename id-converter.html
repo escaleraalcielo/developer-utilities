@@ -13,19 +13,10 @@
     <style>
         /* Mobile overrides */
         @media (max-width: 991.98px) {
-            .glass-panel {
-                margin-bottom: 1rem;
-            }
-
             #inputData,
             #outputData {
                 min-height: 200px;
             }
-        }
-
-        .glass-panel {
-            display: flex;
-            flex-direction: column;
         }
 
         textarea.glass-input {
@@ -36,7 +27,6 @@
 
 <body class="app-mode">
     <!-- Global Navigation -->
-    <!-- Global Navigation -->
     <div class="global-nav">
         <a href="index.html" class="btn global-nav-btn" title="Return to Home" aria-label="Return to Home">
             <i class="bi bi-house-door fs-4"></i>
@@ -46,11 +36,6 @@
     <div class="container-fluid tool-container py-4">
         <!-- Header / Nav -->
         <div class="row mb-4 align-items-center">
-            <div class="col-auto">
-                <a href="index.html" class="btn btn-outline-light btn-sm rounded-circle p-2" aria-label="Return to Home">
-                    <i class="bi bi-arrow-left"></i>
-                </a>
-            </div>
             <div class="col">
                 <h1 class="h4 mb-0 fw-bold">Salesforce ID Converter (15 to 18)</h1>
             </div>
@@ -129,8 +114,8 @@
 
                     <div class="d-flex justify-content-between mt-3 align-items-center">
                         <span class="text-secondary small" id="outputStats">0 items</span>
-                        <button id="copyBtn" class="btn btn-primary btn-sm px-4">
-                            <i class="bi bi-clipboard"></i> Copy
+                        <button id="copyBtn" class="btn btn-primary btn-sm">
+                            <i class="bi bi-clipboard me-1"></i> Copy
                         </button>
                     </div>
                 </div>

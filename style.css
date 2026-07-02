@@ -1,6 +1,7 @@
 :root {
     --bg-color: #0f172a;
     --card-bg: rgba(30, 41, 59, 0.7);
+    --panel-bg: rgba(30, 41, 59, 0.8);
     --text-primary: #f8fafc;
     --text-secondary: #94a3b8;
     --accent-color: #38bdf8;
@@ -67,6 +68,21 @@ body {
     box-shadow: var(--glass-shadow);
 }
 
+/* Tool pages use glass panels as flex columns */
+.tool-page .glass-panel,
+.tool-container .glass-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Mobile: stacked glass panels need breathing room */
+@media (max-width: 991.98px) {
+    .tool-page .glass-panel,
+    .tool-container .glass-panel {
+        margin-bottom: 1rem;
+    }
+}
+
 .hover-glass:hover {
     background: rgba(30, 41, 59, 0.9);
     border-color: var(--accent-color);
@@ -127,7 +143,7 @@ h6 {
     background-color: rgba(15, 23, 42, 0.6);
     border-color: var(--accent-color);
     color: var(--text-primary);
-    box-shadow: 0 0 0 0.25rem rgba(56, 189, 248, 0.15);
+    box-shadow: 0 0 0 0.25rem rgba(56, 189, 248, 0.25);
 }
 
 /* Buttons */
@@ -151,7 +167,7 @@ h6 {
 }
 
 .btn-success:hover {
-    background: linear-gradient(135deg, #34d399, #10b981); /* Lighter variant, not exact match for var */
+    background: linear-gradient(135deg, #10b981, #059669);
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
@@ -249,6 +265,45 @@ h6 {
     background-color: var(--accent-color);
     border-color: var(--accent-color);
     color: white;
+}
+
+/* Tool Drag-and-Drop Upload Zone */
+.drag-area {
+    border: 2px dashed var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.drag-area.active {
+    border-color: var(--accent-color);
+    background: rgba(56, 189, 248, 0.1);
+}
+
+/* Tool Mode Tabs (nav-pills) */
+.nav-pills .nav-link {
+    color: var(--text-secondary);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    margin-right: 0.5rem;
+    border-radius: 0.5rem;
+}
+
+.nav-pills .nav-link:hover {
+    color: var(--text-primary);
+    background: var(--panel-bg);
+}
+
+.nav-pills .nav-link.active {
+    background: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+}
+
+/* Monospace hash / signature output */
+.hash-output {
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    word-break: break-all;
+    font-size: 0.9rem;
+    line-height: 1.5;
 }
 
 /* Navigation Tabs Glass */

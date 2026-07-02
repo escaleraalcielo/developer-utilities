@@ -273,7 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const historyTableBody = document.getElementById('historyTableBody');
     const historyCountEl = document.getElementById('historyCount');
     let sessionHistory = [];
-    const HISTORY_LIMIT = 20;
+    const HISTORY_LIMIT = 10;
 
     resetDefaultsBtn.addEventListener('click', () => {
         resetToDefaults();

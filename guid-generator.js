@@ -40,10 +40,11 @@ if (typeof document !== 'undefined') {
         const copyResultBtn = document.getElementById('copyResultBtn');
         const outputEl = document.getElementById('output');
         const historyTableBody = document.getElementById('historyTableBody');
+        const historyCountEl = document.getElementById('historyCount');
         const statusTextEl = document.getElementById('statusText');
 
         let sessionHistory = [];
-        const HISTORY_LIMIT = 20;
+        const HISTORY_LIMIT = 10;
 
         // Slider logic
         const sliderValues = [1, 2, 3, 4, 5, 10, 15, 20];
@@ -146,10 +147,14 @@ if (typeof document !== 'undefined') {
         };
 
         function renderHistory() {
+            if (historyCountEl) {
+                historyCountEl.textContent = `${sessionHistory.length}/${HISTORY_LIMIT}`;
+            }
+
             if (sessionHistory.length === 0) {
                 historyTableBody.innerHTML = `
                     <tr class="text-center">
-                        <td colspan="4" class="py-4 text-secondary opacity-50 fst-italic">No saved history.</td>
+                        <td colspan="4" class="py-4 text-secondary opacity-50 fst-italic">No saved results in this session.</td>
                     </tr>`;
                 return;
             }

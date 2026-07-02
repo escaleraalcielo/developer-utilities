@@ -11,43 +11,6 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <style>
-        .drag-area {
-            border: 2px dashed var(--border-color);
-            transition: all 0.3s ease;
-        }
-
-        .drag-area.active {
-            border-color: var(--accent-color);
-            background: rgba(56, 189, 248, 0.1);
-        }
-
-        /* Custom Tabs */
-        .nav-pills .nav-link {
-            color: var(--text-secondary);
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            margin-right: 0.5rem;
-            border-radius: 0.5rem;
-        }
-
-        .nav-pills .nav-link:hover {
-            color: var(--text-primary);
-            background: var(--panel-bg);
-        }
-
-        .nav-pills .nav-link.active {
-            background: var(--accent-color);
-            color: white;
-            border-color: var(--accent-color);
-        }
-
-        .hash-output {
-            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-            word-break: break-all;
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-
         .key-input {
             font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
         }
@@ -65,11 +28,6 @@
     <div class="container-fluid tool-container py-4">
         <!-- Header / Nav -->
         <div class="row mb-4 align-items-center">
-            <div class="col-auto">
-                <a href="index.html" class="btn btn-outline-light btn-sm rounded-circle p-2" aria-label="Return to Home">
-                    <i class="bi bi-arrow-left"></i>
-                </a>
-            </div>
             <div class="col">
                 <h1 class="h4 mb-0 fw-bold">HMAC-SHA256</h1>
                 <p class="text-secondary small mb-0">Keyed-hash message authentication code. Perfect for webhook signing
@@ -269,7 +227,7 @@
                             <i class="bi bi-trash me-1"></i> Clear
                         </button>
                         <button id="copyBtn" class="btn btn-primary btn-sm" disabled>
-                            <i class="bi bi-clipboard me-1"></i> Copy to Clipboard
+                            <i class="bi bi-clipboard me-1"></i> Copy
                         </button>
                     </div>
                 </div>
@@ -286,7 +244,7 @@
                                 class="text-secondary opacity-50 small ms-1">(Last 10 items, oldest removed)</span>
                             <span class="badge bg-secondary bg-opacity-25 ms-2" id="historyCount">0/10</span>
                         </h6>
-                        <button class="btn btn-xs btn-link text-secondary text-decoration-none dropdown-toggle small"
+                        <button class="btn btn-sm btn-link text-secondary text-decoration-none dropdown-toggle small"
                             type="button" data-bs-toggle="collapse" data-bs-target="#historyTableContainer">
                             Toggle
                         </button>

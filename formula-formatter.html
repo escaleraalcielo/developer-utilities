@@ -15,20 +15,15 @@
 
     <!-- Global Navigation -->
     <div class="global-nav">
-        <a href="index.html" class="btn global-nav-btn" title="Return to Home">
+        <a href="index.html" class="btn global-nav-btn" title="Return to Home" aria-label="Return to Home">
             <i class="bi bi-house-door fs-4"></i>
         </a>
     </div>
 
     <!-- Main Container -->
-    <div class="container-fluid h-100 py-4 d-flex flex-column">
+    <div class="container-fluid tool-container py-4">
         <!-- Header / Nav -->
         <div class="row mb-4 align-items-center">
-            <div class="col-auto">
-                <a href="index.html" class="btn btn-outline-light btn-sm rounded-circle p-2" aria-label="Return to Home">
-                    <i class="bi bi-arrow-left"></i>
-                </a>
-            </div>
             <div class="col">
                 <h1 class="h4 mb-0 fw-bold">Formula Formatter</h1>
                 <p class="text-secondary mb-0 small mt-1">Format and indent massive Salesforce formula fields.</p>
@@ -41,7 +36,7 @@
             <div class="col-lg-6 d-flex flex-column h-100">
                 <div class="glass-panel p-4 d-flex flex-column h-100">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <label for="inputFormula" class="form-label text-secondary small text-uppercase fw-bold mb-0">Raw Formula</label>
+                        <label for="inputFormula" class="form-label text-secondary small fw-bold text-uppercase mb-2">Raw Formula</label>
                         <div class="d-flex gap-2">
                             <button id="loadSampleBtn" class="btn btn-sm btn-outline-light text-secondary border-0" title="Load Sample" aria-label="Load Sample">
                                 <i class="bi bi-file-earmark-text"></i>
@@ -51,13 +46,13 @@
                             </button>
                         </div>
                     </div>
-                    <textarea id="inputFormula" class="form-control font-monospace flex-grow-1 mb-3"
+                    <textarea id="inputFormula" class="form-control glass-input flex-grow-1 mb-3"
                         placeholder="Paste unformatted Salesforce formula here...&#10;e.g. IF(ISPICKVAL(StageName, 'Closed Won'), Amount * 0.1, 0)"></textarea>
 
                     <div class="row g-3">
                         <div class="col-sm-6">
-                            <label class="form-label text-secondary small">Indentation</label>
-                            <select id="indentSelect" class="form-select bg-dark border-secondary text-white">
+                            <label class="form-label text-secondary small fw-bold text-uppercase mb-2">Indentation</label>
+                            <select id="indentSelect" class="form-select">
                                 <option value="2" selected>2 Spaces</option>
                                 <option value="4">4 Spaces</option>
                                 <option value="\t">Tabs</option>
@@ -76,22 +71,22 @@
             <div class="col-lg-6 d-flex flex-column h-100">
                 <div class="glass-panel p-4 d-flex flex-column h-100 position-relative">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <label for="outputFormula" class="form-label text-secondary small text-uppercase fw-bold mb-0">Formatted Output</label>
+                        <label for="outputFormula" class="form-label text-secondary small fw-bold text-uppercase mb-2">Formatted Output</label>
                         <div class="d-flex gap-2">
                             <button id="saveBtn" class="btn btn-sm btn-outline-light text-secondary border-0" title="Save" aria-label="Save" disabled>
                                 <i class="bi bi-save"></i>
                             </button>
                         </div>
                     </div>
-                    <textarea id="outputFormula" class="form-control font-monospace flex-grow-1 mb-3" readonly
+                    <textarea id="outputFormula" class="form-control glass-input flex-grow-1 mb-3" readonly
                         placeholder="Formatted formula will appear here..."></textarea>
 
                     <div class="d-flex gap-2">
-                        <button id="loadSampleBtnOutput" class="btn btn-outline-info flex-grow-1" title="Load Sample Data">
+                        <button id="loadSampleBtnOutput" class="btn btn-outline-light flex-grow-1" title="Load Sample Data">
                             <i class="bi bi-file-earmark-text me-2"></i> Load Sample
                         </button>
-                        <button id="copyBtn" class="btn btn-outline-success flex-grow-1" disabled>
-                            <i class="bi bi-clipboard me-2"></i> Copy Formula
+                        <button id="copyBtn" class="btn btn-primary btn-sm" disabled>
+                            <i class="bi bi-clipboard me-1"></i> Copy
                         </button>
                     </div>
                 </div>

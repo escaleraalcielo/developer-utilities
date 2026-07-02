@@ -30,11 +30,6 @@
     <div class="container-fluid tool-container py-4">
         <!-- Header / Nav -->
         <div class="row mb-4 align-items-center">
-            <div class="col-auto">
-                <a href="index.html" class="btn btn-outline-light btn-sm rounded-circle p-2" aria-label="Return to Home">
-                    <i class="bi bi-arrow-left"></i>
-                </a>
-            </div>
             <div class="col">
                 <h1 class="h4 mb-0 fw-bold">SObject ID Decoder</h1>
                 <p class="text-secondary small mb-0 mt-1">Decode a Salesforce record ID to its 3-char prefix and likely SObject. Supports 15 and 18-char IDs, bulk decode.</p>
@@ -46,7 +41,7 @@
             <div class="col-12">
                 <div class="glass-panel p-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <label for="inputIds" class="form-label text-secondary small text-uppercase fw-bold mb-0">Paste Salesforce IDs</label>
+                        <label for="inputIds" class="form-label text-secondary small fw-bold text-uppercase mb-2">Paste Salesforce IDs</label>
                         <div class="d-flex gap-2">
                             <button id="loadSampleBtn" class="btn btn-sm btn-outline-light text-secondary border-0" title="Load Sample" aria-label="Load Sample">
                                 <i class="bi bi-file-earmark-text"></i> <span class="d-none d-md-inline ms-1">Sample</span>
@@ -68,7 +63,7 @@
                 <div class="glass-panel p-4">
                     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                         <span id="outputSummary" class="text-secondary small"></span>
-                        <button id="copyBtn" class="btn btn-sm btn-outline-success" title="Copy as TSV">
+                        <button id="copyBtn" class="btn btn-primary btn-sm" title="Copy as TSV">
                             <i class="bi bi-clipboard me-1"></i> Copy TSV
                         </button>
                     </div>

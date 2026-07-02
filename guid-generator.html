@@ -13,24 +13,14 @@
     <style>
         /* Mobile overrides */
         @media (max-width: 991.98px) {
-            .glass-panel {
-                margin-bottom: 1rem;
-            }
-
             #output {
                 min-height: 200px;
             }
-        }
-
-        .glass-panel {
-            display: flex;
-            flex-direction: column;
         }
     </style>
 </head>
 
 <body class="app-mode">
-    <!-- Global Navigation -->
     <!-- Global Navigation -->
     <div class="global-nav">
         <a href="index.html" class="btn global-nav-btn" title="Return to Home" aria-label="Return to Home">
@@ -41,11 +31,6 @@
     <div class="container-fluid tool-container py-4">
         <!-- Header / Nav -->
         <div class="row mb-4 align-items-center">
-            <div class="col-auto">
-                <a href="index.html" class="btn btn-outline-light btn-sm rounded-circle p-2" aria-label="Return to Home">
-                    <i class="bi bi-arrow-left"></i>
-                </a>
-            </div>
             <div class="col">
                 <h1 class="h4 mb-0 fw-bold">GUID Generator</h1>
             </div>
@@ -74,26 +59,36 @@
             </div>
 
             <!-- Right Column: Output -->
-            <div class="col-lg-9 d-flex flex-column desktop-h-100">
+            <div class="col-lg-9 d-flex flex-column">
                 <div class="glass-panel p-4 flex-grow-1 d-flex flex-column" style="min-height: 0;">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <label for="output"
                             class="form-label text-secondary small fw-bold text-uppercase mb-0">Result</label>
-                        <button id="copyResultBtn" class="btn btn-primary btn-sm px-3" disabled>
-                            <i class="bi bi-clipboard-check"></i> Copy Result
+                        <button id="copyResultBtn" class="btn btn-primary btn-sm" disabled>
+                            <i class="bi bi-clipboard me-1"></i> Copy
                         </button>
                     </div>
                     <textarea id="output" class="form-control glass-input flex-grow-1 p-3" readonly></textarea>
                 </div>
+            </div>
+        </div>
 
-                <!-- History Panel (Bottom of this column) -->
-                <div class="glass-panel mt-4 flex-grow-0" style="height: 300px; min-height: 300px;">
+        <!-- History Panel -->
+        <div class="row mt-4 flex-grow-0" style="height: 300px; min-height: 300px;">
+            <div class="col-12 h-100">
+                <div class="glass-panel p-0 h-100 d-flex flex-column">
                     <div
                         class="p-3 border-bottom border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
-                        <h6 class="text-secondary small fw-bold text-uppercase mb-0">Session History</h6>
-                        <span class="badge bg-secondary bg-opacity-25" id="historyCount">0/20</span>
+                        <h6 class="text-secondary small fw-bold text-uppercase mb-0">History <span
+                                class="text-secondary opacity-50 small ms-1">(Last 10 items, oldest removed)</span>
+                            <span class="badge bg-secondary bg-opacity-25 ms-2" id="historyCount">0/10</span>
+                        </h6>
+                        <button class="btn btn-sm btn-link text-secondary text-decoration-none dropdown-toggle small"
+                            type="button" data-bs-toggle="collapse" data-bs-target="#historyTableContainer">
+                            Toggle
+                        </button>
                     </div>
-                    <div class="flex-grow-1 overflow-auto">
+                    <div class="flex-grow-1 overflow-auto collapse show" id="historyTableContainer">
                         <table class="table table-dark table-hover mb-0 text-secondary small bg-transparent">
                             <thead class="sticky-top bg-dark">
                                 <tr>
@@ -105,8 +100,8 @@
                             </thead>
                             <tbody id="historyTableBody">
                                 <tr class="text-center">
-                                    <td colspan="4" class="py-4 text-secondary opacity-50 fst-italic">No saved history.
-                                    </td>
+                                    <td colspan="4" class="py-4 text-secondary opacity-50 fst-italic">No saved results
+                                        in this session.</td>
                                 </tr>
                             </tbody>
                         </table>

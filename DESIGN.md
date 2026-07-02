@@ -7,6 +7,7 @@ Machine-readable design specification for AI consistency.
 ### Primary Palette
 - `--bg-color`: #0f172a (navy dark background)
 - `--card-bg`: rgba(30, 41, 59, 0.7) (surface/card, glassmorphic)
+- `--panel-bg`: rgba(30, 41, 59, 0.8) (slightly stronger surface for hover states)
 - `--text-primary`: #f8fafc (headings, primary text)
 - `--text-secondary`: #94a3b8 (body, labels)
 - `--accent-color`: #38bdf8 (sky blue primary accent)
