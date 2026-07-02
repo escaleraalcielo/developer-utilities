@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const validationMessageEl = document.getElementById('validationMessage');
     const validationTextEl = document.getElementById('validationText');
     const charCountEl = document.getElementById('charCount');
+    const loadSampleBtn = document.getElementById('loadSampleBtn');
 
     // Buttons
     const copyBtn = document.getElementById('copyBtn');
@@ -20,11 +21,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const textTabBtn = document.getElementById('text-tab');
 
     // History
-    const historyTableBody = document.getElementById('historyTableBody');
-    const historyCountEl = document.getElementById('historyCount');
-    const loadSampleBtn = document.getElementById('loadSampleBtn');
-    let sessionHistory = [];
-    const HISTORY_LIMIT = 10;
+    const history = new HistoryManager({
+        getType: () => 'Base64',
+        getPreview: (item) => (item.preview || '').substring(0, 100)
+    });
 
     // Constants
     const MAX_FILE_SIZE_MB = 5;
@@ -133,10 +133,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const content = outputEl.value;
         if (!content) return;
 
-        // If Text mode, save to history now
+        // If Text mode, save to history now (explicit user action)
         if (currentMode === 'text') {
-            const label = textConversionMode === 'encode' ? 'Encoded Text' : 'Decoded Text';
-            addToHistory('Text', label, content);
+            const label = textConversionMode === 'encode' ? 'Encode' : 'Decode';
+            history.add({
+                value: content,
+                preview: `${label} — ${content.substring(0, 90)}`
+            });
         }
 
         outputEl.select();
@@ -200,8 +203,11 @@ document.addEventListener('DOMContentLoaded', () => {
             outputStatsEl.textContent = `${file.name} (${sizeStr})`;
             copyBtn.disabled = false;
 
-            // Auto-save to history
-            addToHistory('File', file.name, base64Content);
+            // Save to history
+            history.add({
+                value: base64Content,
+                preview: `${file.name} (${sizeStr}) — ${base64Content.substring(0, 60)}`
+            });
         };
 
         reader.onerror = () => {
@@ -272,80 +278,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- History Logic ---
-
-    // Expose globally for inline onclicks
-    window.copyFromHistory = (id) => {
-        const item = sessionHistory.find(i => i.id === id);
-        if (item) {
-            copyToClipboard(item.fullResult, 'Copied from history!');
-        }
-    };
-
-    window.deleteFromHistory = (id) => {
-        sessionHistory = sessionHistory.filter(i => i.id !== id);
-        renderHistory();
-    };
-
-    function addToHistory(type, label, content) {
-        // Prevent duplicates at the top
-        if (sessionHistory.length > 0 && sessionHistory[0].fullResult === content) {
-            return;
-        }
-
-        const timestamp = new Date().toLocaleTimeString();
-        let preview = content.substring(0, 60) + (content.length > 60 ? '...' : '');
-
-        const newItem = {
-            id: Date.now(),
-            timestamp,
-            type,       // 'File', 'Text Encode', 'Text Decode'
-            label,      // Filename or 'Text'
-            preview,
-            fullResult: content
-        };
-
-        sessionHistory.unshift(newItem);
-        if (sessionHistory.length > HISTORY_LIMIT) {
-            sessionHistory.pop();
-        }
-
-        renderHistory();
-    }
-
-    function renderHistory() {
-        historyCountEl.textContent = `${sessionHistory.length}/${HISTORY_LIMIT}`;
-
-        if (sessionHistory.length === 0) {
-            historyTableBody.innerHTML = `
-                <tr class="text-center">
-                    <td colspan="4" class="py-4 text-secondary opacity-50 fst-italic">No saved results in this session.</td>
-                </tr>`;
-            return;
-        }
-
-        historyTableBody.innerHTML = '';
-        sessionHistory.forEach(item => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td class="align-middle text-secondary">${item.timestamp}</td>
-                <td class="align-middle text-info"><small>${item.type}</small></td>
-                <td class="align-middle text-break font-monospace" style="font-size: 0.85em;">
-                    ${escapeHtml(item.preview)}
-                </td>
-                <td class="align-middle text-end">
-                    <button class="btn btn-sm btn-link text-primary p-0 me-2" onclick="copyFromHistory(${item.id})" title="Copy">
-                        <i class="bi bi-clipboard"></i>
-                    </button>
-                    <button class="btn btn-sm btn-link text-danger p-0" onclick="deleteFromHistory(${item.id})" title="Delete">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </td>
-            `;
-            historyTableBody.appendChild(row);
-        });
-    }
-
     // Helpers
 
     function formatBytes(bytes, decimals = 2) {
@@ -358,17 +290,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-
-
-function escapeHtml(text) {
-    if (!text) return '';
-    return text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
 
 function fallbackCopyTextToClipboard(text, successMessage) {
     // Create overlay

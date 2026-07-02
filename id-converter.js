@@ -12,6 +12,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const removedContainer = document.getElementById('removedContainer');
     const removedDataEl = document.getElementById('removedData');
 
+    const history = new HistoryManager({
+        getType: () => 'SF ID',
+        getPreview: (item) => (item.preview || '').substring(0, 100)
+    });
+
+    function recordHistory() {
+        if (!outputEl.value) return;
+        history.add({ value: outputEl.value, preview: outputEl.value.substring(0, 100) });
+    }
+
     // Event Listeners
     inputEl.addEventListener('input', updateConversion);
     optionSoqlEl.addEventListener('change', updateConversion);
@@ -105,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         outputEl.select();
         copyToClipboard(outputEl.value, 'IDs copied to clipboard!');
+        recordHistory();
     });
 
     // --- Load Sample Logic ---
@@ -119,6 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             optionSoqlEl.checked = true;
             updateConversion();
+            recordHistory();
         });
     }
 

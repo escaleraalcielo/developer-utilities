@@ -191,6 +191,11 @@ if (typeof document !== 'undefined') {
         const copyBtn = document.getElementById('copyBtn');
         const outputSection = document.getElementById('outputSection');
 
+        const history = new HistoryManager({
+            getType: () => 'SObject ID',
+            getPreview: (item) => (item.preview || '').substring(0, 100)
+        });
+
         function escapeHtml(s) {
             return String(s == null ? '' : s)
                 .replace(/&/g, '&amp;')
@@ -269,7 +274,10 @@ if (typeof document !== 'undefined') {
                 if (!r.ok) return r.raw + '\tERROR\t' + r.error;
                 return r.id + '\t' + r.prefix + '\t' + r.objectName;
             }).join('\n');
-            if (text) copyToClipboard(text, 'Results copied!');
+            if (text) {
+                copyToClipboard(text, 'Results copied!');
+                history.add({ value: text, preview: text.substring(0, 100) });
+            }
         });
 
         loadSampleBtn.addEventListener('click', () => {

@@ -146,10 +146,10 @@ if (typeof document !== 'undefined') {
         const formatBase64Rx = document.getElementById('formatBase64');
 
         // History
-        const historyTableBody = document.getElementById('historyTableBody');
-        const historyCountEl = document.getElementById('historyCount');
-        let sessionHistory = [];
-        const HISTORY_LIMIT = 10;
+        const history = new HistoryManager({
+            getType: (item) => item.type || 'SHA-256',
+            getPreview: (item) => (item.preview || '').substring(0, 100)
+        });
 
         // Constants
         const MAX_FILE_SIZE_MB = 5;
@@ -261,10 +261,8 @@ if (typeof document !== 'undefined') {
         copyBtn.addEventListener('click', () => {
             const content = outputEl.value;
             if (!content) return;
-            if (currentMode === 'text' || currentMode === 'file') {
-                const label = currentMode === 'text' ? 'Hashed Text' : 'Hashed File';
-                addToHistory(currentMode === 'text' ? 'Text' : 'File', label, content);
-            }
+            const type = currentMode === 'text' ? 'Text' : currentMode === 'file' ? 'File' : 'Verify';
+            history.add({ value: content, type, preview: content.substring(0, 100) });
             outputEl.select();
             copyToClipboard(content, 'Copied to clipboard!');
         });
@@ -344,7 +342,7 @@ if (typeof document !== 'undefined') {
                 outputStatsEl.textContent = `${file.name} (${sizeStr})`;
                 outputStatsEl.classList.add('text-success');
                 copyBtn.disabled = false;
-                addToHistory('File', file.name, result);
+                history.add({ value: result, type: 'File', preview: result.substring(0, 100) });
             } catch (e) {
                 console.error(e);
                 showError('Error reading or hashing file.');
@@ -434,6 +432,7 @@ if (typeof document !== 'undefined') {
                     verifyHash.classList.add('border-success');
                     showInfo('Match - the text produces the expected hash.');
                     copyBtn.disabled = false;
+                    history.add({ value: computedHex, type: 'Verify', preview: computedHex.substring(0, 100) });
                 } else if (status === 'mismatch') {
                     outputEl.value = computedHex;
                     outputStatsEl.textContent = 'Mismatch';
@@ -441,6 +440,7 @@ if (typeof document !== 'undefined') {
                     verifyHash.classList.add('border-danger');
                     showError('Mismatch - the text does NOT produce the expected hash.');
                     copyBtn.disabled = false;
+                    history.add({ value: computedHex, type: 'Verify', preview: computedHex.substring(0, 100) });
                 } else if (status === 'unsupported-format') {
                     outputEl.value = '';
                     outputStatsEl.textContent = 'Invalid format';
@@ -457,71 +457,6 @@ if (typeof document !== 'undefined') {
             }
         }
 
-        // --- History Logic ---
-
-        window.copyFromHistory = (id) => {
-            const item = sessionHistory.find(i => i.id === id);
-            if (item) copyToClipboard(item.fullResult, 'Copied from history!');
-        };
-
-        window.deleteFromHistory = (id) => {
-            sessionHistory = sessionHistory.filter(i => i.id !== id);
-            renderHistory();
-        };
-
-        function addToHistory(type, label, content) {
-            if (sessionHistory.length > 0 && sessionHistory[0].fullResult === content) return;
-
-            const timestamp = new Date().toLocaleTimeString();
-            const preview = content.substring(0, 60) + (content.length > 60 ? '...' : '');
-
-            const newItem = {
-                id: Date.now(),
-                timestamp,
-                type,
-                label,
-                preview,
-                fullResult: content
-            };
-
-            sessionHistory.unshift(newItem);
-            if (sessionHistory.length > HISTORY_LIMIT) sessionHistory.pop();
-            renderHistory();
-        }
-
-        function renderHistory() {
-            historyCountEl.textContent = `${sessionHistory.length}/${HISTORY_LIMIT}`;
-
-            if (sessionHistory.length === 0) {
-                historyTableBody.innerHTML = `
-                    <tr class="text-center">
-                        <td colspan="4" class="py-4 text-secondary opacity-50 fst-italic">No saved results in this session.</td>
-                    </tr>`;
-                return;
-            }
-
-            historyTableBody.innerHTML = '';
-            sessionHistory.forEach(item => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td class="align-middle text-secondary">${item.timestamp}</td>
-                    <td class="align-middle text-info"><small>${item.type}</small></td>
-                    <td class="align-middle text-break hash-output" style="font-size: 0.85em;">
-                        ${escapeHtml(item.preview)}
-                    </td>
-                    <td class="align-middle text-end">
-                        <button class="btn btn-sm btn-link text-primary p-0 me-2" onclick="copyFromHistory(${item.id})" title="Copy">
-                            <i class="bi bi-clipboard"></i>
-                        </button>
-                        <button class="btn btn-sm btn-link text-danger p-0" onclick="deleteFromHistory(${item.id})" title="Delete">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </td>
-                `;
-                historyTableBody.appendChild(row);
-            });
-        }
-
         // Helpers
         function formatBytes(bytes, decimals = 2) {
             if (bytes === 0) return '0 Bytes';
@@ -532,15 +467,6 @@ if (typeof document !== 'undefined') {
             return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
         }
 
-        function escapeHtml(text) {
-            if (!text) return '';
-            return text
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
-        }
     });
 }
 

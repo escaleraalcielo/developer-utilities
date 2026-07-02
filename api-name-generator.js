@@ -10,6 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const outputCount = document.getElementById('outputCount');
     const loadSampleBtn = document.getElementById('loadSampleBtn');
 
+    const history = new HistoryManager({
+        getType: () => 'API Name',
+        getPreview: (item) => (item.preview || '').substring(0, 100)
+    });
+
     // --- Load Sample Logic ---
     if (loadSampleBtn) {
         loadSampleBtn.addEventListener('click', () => {
@@ -56,6 +61,11 @@ document.addEventListener('DOMContentLoaded', () => {
         outputCount.textContent = `${count} item${count !== 1 ? 's' : ''}`;
 
         copyBtn.disabled = count === 0;
+
+        if (count > 0) {
+            const outputString = apiNames.join('\n');
+            history.add({ value: outputString, preview: outputString.substring(0, 100) });
+        }
     });
 
     // Copy to Clipboard

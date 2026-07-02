@@ -18,6 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const cronStringExp = document.getElementById('cronStringExp');
     const copyBtn = document.getElementById('copyBtn');
 
+    const history = new HistoryManager({
+        getType: () => 'Cron',
+        getPreview: (item) => (item.preview || '').substring(0, 100)
+    });
+
     // Populate Hour Dropdown
     for (let i = 0; i < 24; i++) {
         let option = document.createElement('option');
@@ -113,7 +118,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Copy Action
     copyBtn.addEventListener('click', () => {
-        copyToClipboard(cronOutput.textContent, 'Cron expression copied!');
+        const cronStr = cronOutput.textContent;
+        const jobName = jobNameInput.value.trim() || 'My Job Name';
+        history.add({
+            value: cronStr,
+            preview: `${cronStr} (${jobName})`
+        });
+        copyToClipboard(cronStr, 'Cron expression copied!');
     });
 });
 

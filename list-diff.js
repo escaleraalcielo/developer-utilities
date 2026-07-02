@@ -22,6 +22,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const resOnlyB = document.getElementById('resOnlyB');
     const resCommon = document.getElementById('resCommon');
 
+    // History
+    const history = new HistoryManager({
+        getType: () => 'List Diff',
+        getPreview: (item) => item.preview || ''
+    });
+
     // State
     let resultSets = {
         onlyA: [],
@@ -244,6 +250,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (items.length === 0) return;
 
         const text = items.join('\n');
+
+        const typeLabel = type === 'onlyA' ? 'Only in A' : type === 'onlyB' ? 'Only in B' : 'Common';
+        history.add({
+            value: text,
+            preview: `${typeLabel} (${items.length}): ${text.substring(0, 100)}`
+        });
 
         copyToClipboard(text, 'List copied to clipboard!');
     };
