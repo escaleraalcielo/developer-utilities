@@ -39,12 +39,12 @@ if (typeof document !== 'undefined') {
         const generateBtn = document.getElementById('generateBtn');
         const copyResultBtn = document.getElementById('copyResultBtn');
         const outputEl = document.getElementById('output');
-        const historyTableBody = document.getElementById('historyTableBody');
-        const historyCountEl = document.getElementById('historyCount');
         const statusTextEl = document.getElementById('statusText');
 
-        let sessionHistory = [];
-        const HISTORY_LIMIT = 10;
+        const history = new HistoryManager({
+            getType: () => 'GUID',
+            getPreview: (item) => (item.preview || '').substring(0, 100)
+        });
 
         // Slider logic
         const sliderValues = [1, 2, 3, 4, 5, 10, 15, 20];
@@ -112,81 +112,8 @@ if (typeof document !== 'undefined') {
             statusTextEl.textContent = 'Copied and Saved to History.';
 
             // 2. Add to History
-            const items = result.split('\n');
-            const count = items.length;
-            const timestamp = new Date().toLocaleTimeString();
-            const firstLine = items[0];
-
-            const newItem = {
-                id: Date.now(),
-                timestamp,
-                count,
-                preview: firstLine,
-                result
-            };
-
-            sessionHistory.unshift(newItem);
-            if (sessionHistory.length > HISTORY_LIMIT) sessionHistory.pop();
-
-            renderHistory();
+            history.add({ value: result, preview: result.split('\n')[0].substring(0, 100) });
         });
-
-        // --- Global Actions (attached to window for inline onclick) ---
-        window.copyHistoryItem = (id) => {
-            const item = sessionHistory.find(i => i.id === id);
-            if (item) {
-                copyToClipboard(item.result, 'Copied from history.');
-                statusTextEl.textContent = 'Copied from history.';
-            }
-        };
-
-        window.deleteHistoryItem = (id) => {
-            sessionHistory = sessionHistory.filter(i => i.id !== id);
-            renderHistory();
-            statusTextEl.textContent = 'Deleted from history.';
-        };
-
-        function renderHistory() {
-            if (historyCountEl) {
-                historyCountEl.textContent = `${sessionHistory.length}/${HISTORY_LIMIT}`;
-            }
-
-            if (sessionHistory.length === 0) {
-                historyTableBody.innerHTML = `
-                    <tr class="text-center">
-                        <td colspan="4" class="py-4 text-secondary opacity-50 fst-italic">No saved results in this session.</td>
-                    </tr>`;
-                return;
-            }
-
-            historyTableBody.innerHTML = '';
-            sessionHistory.forEach(item => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="align-middle text-secondary">${item.timestamp}</td>
-                    <td class="align-middle text-info">${item.count}</td>
-                    <td class="align-middle text-truncate" style="max-width: 300px;">
-                        <code class="text-light">${escapeHtml(item.preview)}</code>
-                    </td>
-                    <td class="align-middle text-end">
-                        <button class="btn btn-sm btn-link text-primary p-0 me-2" onclick="copyHistoryItem(${item.id})" title="Copy">
-                            <i class="bi bi-clipboard"></i>
-                        </button>
-                        <button class="btn btn-sm btn-link text-danger p-0" onclick="deleteHistoryItem(${item.id})" title="Delete">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </td>
-                `;
-                historyTableBody.appendChild(tr);
-            });
-        }
-
-        function escapeHtml(text) {
-            if (typeof document === 'undefined') return text;
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
     });
 }
 
