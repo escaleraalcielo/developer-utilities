@@ -240,6 +240,11 @@ if (typeof document !== 'undefined') {
         const clearBtn = document.getElementById('clearBtn');
         const copyNormalizedBtn = document.getElementById('copyNormalizedBtn');
 
+        const history = new HistoryManager({
+            getType: (item) => item.format || 'Hash',
+            getPreview: (item) => (item.preview || '').substring(0, 100)
+        });
+
         const CONFIDENCE_BADGE = {
             high: { cls: 'bg-success', icon: 'bi-check-circle-fill' },
             medium: { cls: 'bg-warning text-dark', icon: 'bi-dash-circle-fill' },
@@ -367,6 +372,11 @@ if (typeof document !== 'undefined') {
             const res = identifyHash(raw);
             if (res.ok) {
                 showResults(res);
+                history.add({
+                    value: res.normalized || res.input,
+                    format: res.format.toUpperCase(),
+                    preview: res.matches && res.matches.length ? res.matches[0].name : (res.normalized || res.input)
+                });
             } else {
                 showUnknown(res.error);
             }

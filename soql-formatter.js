@@ -321,6 +321,11 @@ if (typeof document !== 'undefined') {
         const statusEl = document.getElementById('validationStatus');
         const statsEl = document.getElementById('outputStats');
 
+        const history = new HistoryManager({
+            getType: () => 'SOQL',
+            getPreview: (item) => (item.preview || '').substring(0, 100)
+        });
+
         function getIndent() {
             const v = indentSelect.value;
             if (v === '2') return '  ';
@@ -377,6 +382,11 @@ if (typeof document !== 'undefined') {
                 setStatus('ok', 'Valid SOQL');
                 setStats(r.output);
                 copyBtn.disabled = false;
+
+                history.add({
+                    value: r.output,
+                    preview: r.output.substring(0, 100)
+                });
             } else {
                 outputEl.value = '';
                 setStatus('err', r.error, { line: r.line, column: r.column });

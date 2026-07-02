@@ -12,6 +12,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const validationText = document.getElementById('validationText');
     const loadSampleBtn = document.getElementById('loadSampleBtn');
 
+    const history = new HistoryManager({
+        getType: (item) => item.mode || 'XML',
+        getPreview: (item) => (item.preview || '').substring(0, 100)
+    });
+
     let currentMode = 'format'; // 'format' or 'minify'
 
     // --- Load Sample Logic ---
@@ -106,6 +111,12 @@ document.addEventListener('DOMContentLoaded', () => {
             outputEl.value = result;
             outputStatsEl.textContent = `${result.length} characters`;
             hideError();
+
+            history.add({
+                value: result,
+                mode: currentMode === 'format' ? 'Format' : 'Minify',
+                preview: result.substring(0, 100)
+            });
 
         } catch (e) {
             showError("Invalid XML: " + e.message);

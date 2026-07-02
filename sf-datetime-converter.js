@@ -321,6 +321,11 @@ if (typeof document !== 'undefined') {
         const singlePane = document.getElementById('singlePane');
         const bulkPane = document.getElementById('bulkPane');
 
+        const history = new HistoryManager({
+            getType: () => 'DateTime',
+            getPreview: (item) => (item.preview || '').substring(0, 100)
+        });
+
         // Populate timezone select with common TZs + detected local TZ if not already listed.
         const localTz = detectLocalTimezone();
         const tzSet = new Set(COMMON_TIMEZONES);
@@ -439,6 +444,12 @@ if (typeof document !== 'undefined') {
             if (currentMode === 'single') {
                 const res = convertDatetime(raw, { targetTimeZone: tzSelect.value });
                 renderSingleOutputs(res);
+                if (res.ok) {
+                    history.add({
+                        value: res.outputs.salesforceDateTimeUtc,
+                        preview: res.parsed.original
+                    });
+                }
             } else {
                 const res = convertDatetimeBulk(raw, { targetTimeZone: tzSelect.value });
                 renderBulkOutputs(res);

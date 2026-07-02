@@ -203,6 +203,11 @@ if (typeof document !== 'undefined') {
         const statusEl = document.getElementById('validationStatus');
         const statsEl = document.getElementById('outputStats');
 
+        const history = new HistoryManager({
+            getType: (item) => item.action || 'JSON',
+            getPreview: (item) => item.preview || ''
+        });
+
         const MAX_CHARS = 50000;
 
         function getIndent() {
@@ -254,6 +259,15 @@ if (typeof document !== 'undefined') {
                 setStatus('ok', 'Valid JSON');
                 setStats(res.stats);
                 copyBtn.disabled = false;
+
+                const action = formatBtn.checked ? 'Format' : minifyBtn.checked ? 'Minify' : 'Validate';
+                if (action !== 'Validate') {
+                    history.add({
+                        value: res.output,
+                        action: action,
+                        preview: (res.output || '').substring(0, 100)
+                    });
+                }
             } else {
                 outputEl.value = '';
                 setStatus('err', res.error.message, res.error);

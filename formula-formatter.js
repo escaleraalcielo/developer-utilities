@@ -9,6 +9,11 @@ if (typeof document !== 'undefined') {
     const indentSelect = document.getElementById('indentSelect');
     const loadSampleBtn = document.getElementById('loadSampleBtn');
 
+    const history = new HistoryManager({
+        getType: () => 'Formula',
+        getPreview: (item) => (item.preview || '').substring(0, 100)
+    });
+
     // --- Load Sample Logic ---
     if (loadSampleBtn) {
         loadSampleBtn.addEventListener('click', () => {
@@ -40,6 +45,11 @@ if (typeof document !== 'undefined') {
         outputFormula.value = formatted;
         copyBtn.disabled = false;
         saveBtn.disabled = false;
+
+        history.add({
+            value: formatted,
+            preview: formatted.substring(0, 100)
+        });
     });
 
     saveBtn.addEventListener('click', () => {
