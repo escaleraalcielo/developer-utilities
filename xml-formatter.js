@@ -147,10 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 indentStr = 0;
             }
 
-            let padding = '';
-            for (let i = 0; i < pad; i++) {
-                padding += indent;
-            }
+            let padding = indent.repeat(pad);
 
             formatted += padding + node + '\r\n';
             pad += indentStr;
