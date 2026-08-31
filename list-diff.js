@@ -89,13 +89,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const mapA = buildMap(listA, isSmartSF, isCaseSensitive);
         const mapB = buildMap(listB, isSmartSF, isCaseSensitive);
 
-        const keysA = new Set(mapA.keys());
-        const keysB = new Set(mapB.keys());
+        const onlyAKeys = [];
+        const onlyBKeys = [];
+        const commonKeys = [];
 
-        // Calculate Sets
-        const onlyAKeys = [...keysA].filter(k => !keysB.has(k));
-        const onlyBKeys = [...keysB].filter(k => !keysA.has(k));
-        const commonKeys = [...keysA].filter(k => keysB.has(k));
+        for (const k of mapA.keys()) {
+            if (mapB.has(k)) {
+                commonKeys.push(k);
+            } else {
+                onlyAKeys.push(k);
+            }
+        }
+
+        for (const k of mapB.keys()) {
+            if (!mapA.has(k)) {
+                onlyBKeys.push(k);
+            }
+        }
 
         // Retrieve Original Values
         // If duplicates are NOT removed, we might technically have multiple originals for a key.
