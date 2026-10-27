@@ -209,9 +209,26 @@ document.addEventListener('DOMContentLoaded', () => {
             // Simple visualizer: Replace space chars with a span containing a dot?
             // Or just use the 'invisible-space' class for the space chars.
 
-            const content = escapeHtml(item).replace(/ /g, '<span class="invisible-space">·</span>');
+            if (!item) {
+                const emptySpan = document.createElement('span');
+                emptySpan.className = 'text-muted fst-italic';
+                emptySpan.textContent = '<empty>';
+                div.appendChild(emptySpan);
+            } else {
+                const parts = item.split(' ');
+                parts.forEach((part, index) => {
+                    if (part.length > 0) {
+                        div.appendChild(document.createTextNode(part));
+                    }
+                    if (index < parts.length - 1) {
+                        const spaceSpan = document.createElement('span');
+                        spaceSpan.className = 'invisible-space';
+                        spaceSpan.textContent = '·';
+                        div.appendChild(spaceSpan);
+                    }
+                });
+            }
 
-            div.innerHTML = content || '<span class="text-muted fst-italic">&lt;empty&gt;</span>';
             fragment.appendChild(div);
         });
 
