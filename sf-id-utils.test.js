@@ -51,4 +51,28 @@ describe('to18CharId', () => {
         expect(to18CharId(null)).toBe('');
         expect(to18CharId(undefined)).toBe('');
     });
+
+    test('should correctly compute all 32 possible checksum characters', () => {
+        const CHECKSUM_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ012345";
+
+        for (let i = 0; i < 32; i++) {
+            let block = "";
+            for (let j = 0; j < 5; j++) {
+                // If the j-th bit of i is set, use an uppercase letter (adds to flag), otherwise lowercase.
+                if ((i & (1 << j)) !== 0) {
+                    block += 'A';
+                } else {
+                    block += 'a';
+                }
+            }
+
+            // Repeat the block 3 times to make a 15 character ID where each chunk of 5
+            // produces the identical checksum value
+            const id15 = block + block + block;
+            const expectedChar = CHECKSUM_CHARS.charAt(i);
+            const expected18 = id15 + expectedChar + expectedChar + expectedChar;
+
+            expect(to18CharId(id15)).toBe(expected18);
+        }
+    });
 });
