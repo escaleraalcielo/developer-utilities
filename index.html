@@ -391,11 +391,14 @@
         (function() {
             const toolsGrid = document.getElementById('toolsGrid');
             const resetBtn = document.getElementById('resetOrderBtn');
+            const STORAGE_KEY = 'devutils-tool-order';
             let draggedCard = null;
             const originalOrderSnapshot = Array.from(toolsGrid.querySelectorAll('.tool-card')).map(c => c.dataset.toolId);
             
             // Get all tool cards (excluding the placeholder)
             function getToolCards() {
+                return Array.from(toolsGrid.querySelectorAll('.tool-card'));
+            }
             
             // Save order to localStorage
             function saveOrder() {
